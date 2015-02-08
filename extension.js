@@ -28,42 +28,6 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 
-const WorkAreaConstraint = new Lang.Class({
-    Name: 'WorkAreaConstraint',
-    Extends: Layout.MonitorConstraint,
-
-    vfunc_set_actor: function(actor) {
-        if (actor) {
-            if (!this._workareasChangedId) {
-                this._workareasChangedId = global.screen.connect('workareas-changed', Lang.bind(this, function() {
-                    this.actor.queue_relayout();
-                }));
-            }
-        } else {
-            if (this._workareasChangedId)
-                global.screen.disconnect(this._workareasChangedId);
-            this._workareasChangedId = 0;
-        }
-
-        this.parent(actor);
-    },
-
-    vfunc_update_allocation: function(actor, actorBox) {
-        if (!this._primary && this._index < 0)
-            return;
-
-        let index;
-        if (this._primary)
-            index = Main.layoutManager.primaryIndex;
-        else
-            index = Math.min(this._index, Main.layoutManager.monitors.length - 1);
-
-        let ws = global.screen.get_workspace_by_index(0);
-        let workArea = ws.get_work_area_for_monitor(index);
-        actorBox.init_rect(workArea.x, workArea.y, workArea.width, workArea.height);
-    }
-});
-
 const BackgroundLogo = new Lang.Class({
     Name: 'BackgroundLogo',
 
@@ -88,7 +52,8 @@ const BackgroundLogo = new Lang.Class({
         bgManager._container.add_actor(this.actor);
 
         let monitorIndex = bgManager._monitorIndex;
-        let constraint = new WorkAreaConstraint({ index: monitorIndex });
+        let constraint = new Layout.MonitorConstraint({ index: monitorIndex,
+                                                        work_area: true });
         this.actor.add_constraint(constraint);
 
         this._bin = new St.Widget({ x_expand: true, y_expand: true });
