@@ -96,6 +96,14 @@ const BackgroundLogo = new Lang.Class({
         let size = this._settings.get_double('logo-size');
         let width = this.actor.width * size / 100;
         let height = this._icon.height * width / this._icon.width;
+        if (Math.abs(this._icon.height - height) < 1.0 &&
+            Math.abs(this._icon.width - width) < 1.0) {
+            // size of icon would not significantly change, so don't
+            // update the size to avoid recursion in case the
+            // manually set size differs just minimal from the eventually
+            // allocated size
+            return;
+        }
         this._icon.set_size(width, height);
     },
 
