@@ -74,6 +74,11 @@ const BackgroundLogoPrefsWidget = new Lang.Class({
         adjustment = this._createAdjustment('logo-opacity', 1.0);
         scale = new Gtk.Scale({ adjustment: adjustment, draw_value: false });
         this._addRow(5, "Opacity", scale);
+
+        let checkWidget = new Gtk.CheckButton({ label: "Show for all backgrounds" });
+        this._settings.bind('logo-always-visible', checkWidget, 'active',
+                            Gio.SettingsBindFlags.DEFAULT);
+        this.attach(checkWidget, 1, 6, 1, 1);
     },
 
     _addRow: function(row, label, widget) {

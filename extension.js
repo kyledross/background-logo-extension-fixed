@@ -44,6 +44,8 @@ const BackgroundLogo = new Lang.Class({
                                Lang.bind(this, this._updatePosition));
         this._settings.connect('changed::logo-border',
                                Lang.bind(this, this._updateBorder));
+        this._settings.connect('changed::logo-always-visible',
+                               Lang.bind(this, this._updateVisibility));
 
         this._textureCache = St.TextureCache.get_default();
 
@@ -142,7 +144,9 @@ const BackgroundLogo = new Lang.Class({
         let file = Gio.File.new_for_commandline_arg(defaultUri.deep_unpack());
 
         let visible;
-        if (background._file) // > 3.14
+        if (this._settings.get_boolean('logo-always-visible'))
+            visible = true;
+        else if (background._file) // > 3.14
             visible = background._file.equal(file);
         else if (background._filename) // <= 3.14
             visible = background._filename == file.get_path();
