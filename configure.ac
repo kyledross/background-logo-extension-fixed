@@ -1,5 +1,5 @@
 AC_PREREQ(2.63)
-AC_INIT([background-logo-extension],[3.21.3])
+AC_INIT([background-logo-extension],[3.21.91])
 
 AC_CONFIG_AUX_DIR([config])
 
