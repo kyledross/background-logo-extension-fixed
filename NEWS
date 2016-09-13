@@ -1,3 +1,10 @@
+3.21.92
+=======
+* Add option to show logo for all backgrounds
+
+Contributors:
+  Olivier Samyn
+
 3.16.1
 ======
 * Fix high CPU usage due to feedback loop [Christian]
