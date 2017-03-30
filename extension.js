@@ -34,6 +34,8 @@ const BackgroundLogo = new Lang.Class({
     _init: function(bgManager) {
         this._bgManager = bgManager;
 
+        this._logoFile = null;
+
         this._settings = Convenience.getSettings();
 
         this._settings.connect('changed::logo-file',
@@ -80,16 +82,21 @@ const BackgroundLogo = new Lang.Class({
     },
 
     _updateLogo: function() {
+        let filename = this._settings.get_string('logo-file');
+        let file = Gio.File.new_for_commandline_arg(filename);
+        if (this._logoFile && this._logoFile.equal(file))
+            return;
+
+        this._logoFile = file;
+
         if (this._icon)
             this._icon.destroy();
 
-        let filename = this._settings.get_string('logo-file');
-        let file = Gio.File.new_for_commandline_arg(filename);
         let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
         if (this._textureCache.load_file_async) { // > 3.14
-            this._icon = this._textureCache.load_file_async(file, -1, -1, scaleFactor);
+            this._icon = this._textureCache.load_file_async(this._logoFile, -1, -1, scaleFactor);
         } else { // <= 3.14
-            this._icon = this._textureCache.load_uri_async(file.get_uri(), -1, -1, scaleFactor);
+            this._icon = this._textureCache.load_uri_async(this._logoFile.get_uri(), -1, -1, scaleFactor);
         }
         this._icon.connect('allocation-changed',
                            Lang.bind(this, this._updateScale));
@@ -189,6 +196,8 @@ const BackgroundLogo = new Lang.Class({
         this._bgChangedId = 0;
 
         this._bgManager = null;
+
+        this._logoFile = null;
     }
 });
 
