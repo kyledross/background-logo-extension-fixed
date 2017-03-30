@@ -50,6 +50,12 @@ const BackgroundLogo = new Lang.Class({
                                Lang.bind(this, this._updateVisibility));
 
         this._textureCache = St.TextureCache.get_default();
+        this._textureCache.connect('texture-file-changed', Lang.bind(this,
+            function(cache, file) {
+                if (!this._logoFile || !this._logoFile.equal(file))
+                    return;
+                this._updateLogoTexture();
+            }));
 
         this.actor = new St.Widget({ layout_manager: new Clutter.BinLayout(),
                                      opacity: 0 });
@@ -89,6 +95,10 @@ const BackgroundLogo = new Lang.Class({
 
         this._logoFile = file;
 
+        this._updateLogoTexture();
+    },
+
+    _updateLogoTexture: function() {
         if (this._icon)
             this._icon.destroy();
 
