@@ -53,6 +53,8 @@ const BackgroundLogo = new Lang.Class({
                                      opacity: 0 });
         bgManager._container.add_actor(this.actor);
 
+        this.actor.connect('destroy', Lang.bind(this, this._onDestroy));
+
         let monitorIndex = bgManager._monitorIndex;
         let constraint = new Layout.MonitorConstraint({ index: monitorIndex,
                                                         work_area: true });
@@ -68,9 +70,12 @@ const BackgroundLogo = new Lang.Class({
         this._updatePosition();
         this._updateBorder();
 
-        bgManager.backgroundActor.connect('destroy', Lang.bind(this, this._backgroundDestroyed));
+        this._bgDestroyedId =
+            bgManager.backgroundActor.connect('destroy',
+                                              Lang.bind(this, this._backgroundDestroyed));
 
-        bgManager.connect('changed', Lang.bind(this, this._updateVisibility));
+        this._bgChangedId =
+            bgManager.connect('changed', Lang.bind(this, this._updateVisibility));
         this._updateVisibility();
     },
 
@@ -161,11 +166,29 @@ const BackgroundLogo = new Lang.Class({
     },
 
     _backgroundDestroyed: function() {
+        this._bgDestroyedId = 0;
+
         if (this._bgManager._backgroundSource) // background swapped
-            this._bgManager.backgroundActor.connect('destroy',
-                                                    Lang.bind(this, this._backgroundDestroyed));
+            this._bgDestroyedId =
+                this._bgManager.backgroundActor.connect('destroy',
+                                                        Lang.bind(this, this._backgroundDestroyed));
         else // bgManager destroyed
             this.actor.destroy();
+    },
+
+    _onDestroy: function() {
+        this._settings.run_dispose();
+        this._settings = null;
+
+        if (this._bgDestroyedId)
+            this._bgManager.backgroundActor.disconnect(this._bgDestroyedId);
+        this._bgDestroyedId = 0;
+
+        if (this._bgChangedId)
+            this._bgManager.disconnect(this._bgChangedId);
+        this._bgChangedId = 0;
+
+        this._bgManager = null;
     }
 });
 
