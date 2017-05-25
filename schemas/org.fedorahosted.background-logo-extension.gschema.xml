@@ -10,7 +10,7 @@
   <schema path="/org/fedorahosted/background-logo-extension/"
           id="org.fedorahosted.background-logo-extension">
     <key type="s" name="logo-file">
-      <default>'/usr/share/pixmaps/fedora_whitelogo.svg'</default>
+      <default>'/usr/share/fedora-logos/fedora_lightbackground.svg'</default>
       <summary>Logo file</summary>
       <description>The full logo file path</description>
     </key>
@@ -37,7 +37,7 @@
     </key>
     <key type="u" name="logo-opacity">
       <range min="0" max="255"/>
-      <default>80</default>
+      <default>255</default>
       <summary>Logo opacity</summary>
       <description>The opacity of the logo</description>
     </key>
