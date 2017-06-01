@@ -1,3 +1,11 @@
+3.24.0
+======
+* Update logo on texture file changes [Florian]
+* Update settings to fit F26 background [Paul]
+
+Contributors:
+  Florian Müllner, Paul W. Frields
+
 3.21.92
 =======
 * Add option to show logo for all backgrounds
