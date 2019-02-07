@@ -39,29 +39,28 @@ const BackgroundLogo = new Lang.Class({
         this._settings = Convenience.getSettings();
 
         this._settings.connect('changed::logo-file',
-                               Lang.bind(this, this._updateLogo));
+                               this._updateLogo.bind(this));
         this._settings.connect('changed::logo-size',
-                               Lang.bind(this, this._updateScale));
+                               this._updateScale.bind(this));
         this._settings.connect('changed::logo-position',
-                               Lang.bind(this, this._updatePosition));
+                               this._updatePosition.bind(this));
         this._settings.connect('changed::logo-border',
-                               Lang.bind(this, this._updateBorder));
+                               this._updateBorder.bind(this));
         this._settings.connect('changed::logo-always-visible',
-                               Lang.bind(this, this._updateVisibility));
+                               this._updateVisibility.bind(this));
 
         this._textureCache = St.TextureCache.get_default();
-        this._textureCache.connect('texture-file-changed', Lang.bind(this,
-            function(cache, file) {
-                if (!this._logoFile || !this._logoFile.equal(file))
-                    return;
-                this._updateLogoTexture();
-            }));
+        this._textureCache.connect('texture-file-changed', (cache, file) => {
+            if (!this._logoFile || !this._logoFile.equal(file))
+                return;
+            this._updateLogoTexture();
+        });
 
         this.actor = new St.Widget({ layout_manager: new Clutter.BinLayout(),
                                      opacity: 0 });
         bgManager._container.add_actor(this.actor);
 
-        this.actor.connect('destroy', Lang.bind(this, this._onDestroy));
+        this.actor.connect('destroy', this._onDestroy.bind(this));
 
         let monitorIndex = bgManager._monitorIndex;
         let constraint = new Layout.MonitorConstraint({ index: monitorIndex,
@@ -80,10 +79,10 @@ const BackgroundLogo = new Lang.Class({
 
         this._bgDestroyedId =
             bgManager.backgroundActor.connect('destroy',
-                                              Lang.bind(this, this._backgroundDestroyed));
+                                              this._backgroundDestroyed.bind(this));
 
         this._bgChangedId =
-            bgManager.connect('changed', Lang.bind(this, this._updateVisibility));
+            bgManager.connect('changed', this._updateVisibility.bind(this));
         this._updateVisibility();
     },
 
@@ -109,7 +108,7 @@ const BackgroundLogo = new Lang.Class({
             this._icon = this._textureCache.load_uri_async(this._logoFile.get_uri(), -1, -1, scaleFactor);
         }
         this._icon.connect('allocation-changed',
-                           Lang.bind(this, this._updateScale));
+                           this._updateScale.bind(this));
         this._bin.add_actor(this._icon);
     },
 
@@ -188,7 +187,7 @@ const BackgroundLogo = new Lang.Class({
         if (this._bgManager._backgroundSource) // background swapped
             this._bgDestroyedId =
                 this._bgManager.backgroundActor.connect('destroy',
-                                                        Lang.bind(this, this._backgroundDestroyed));
+                                                        this._backgroundDestroyed.bind(this));
         else // bgManager destroyed
             this.actor.destroy();
     },

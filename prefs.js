@@ -24,20 +24,19 @@ const BackgroundLogoPrefsWidget = new Lang.Class({
                       column_spacing: 12,
                       row_spacing: 6 });
 
-        this.connect('screen-changed', Lang.bind(this, this._onScreenChanged));
+        this.connect('screen-changed', this._onScreenChanged.bind(this));
 
         this._settings = Convenience.getSettings();
-        this._settings.connect('changed', Lang.bind(this,
-            function(settings, key) {
-                if (key == 'logo-file' ||
-                    key == 'logo-size')
-                    this._logo = null;
-                this._preview.queue_draw();
-            }));
+        this._settings.connect('changed', (settings, key) => {
+            if (key == 'logo-file' ||
+                key == 'logo-size')
+                this._logo = null;
+            this._preview.queue_draw();
+        });
 
         this._preview = new Gtk.DrawingArea({ halign: Gtk.Align.CENTER,
                                               margin_bottom: 18 });
-        this._preview.connect('draw', Lang.bind(this, this._drawPreview));
+        this._preview.connect('draw', this._drawPreview.bind(this));
         this.attach(this._preview, 0, 0, 2, 1);
 
         let filter = new Gtk.FileFilter();
@@ -46,11 +45,9 @@ const BackgroundLogoPrefsWidget = new Lang.Class({
         let fileChooser = new Gtk.FileChooserButton({ title: "Select an Image",
                                                       filter: filter });
         fileChooser.set_filename(this._settings.get_string('logo-file'));
-        fileChooser.connect('file-set', Lang.bind(this,
-            function() {
-                this._settings.set_string('logo-file',
-                                          fileChooser.get_filename());
-            }));
+        fileChooser.connect('file-set',  () => {
+            this._settings.set_string('logo-file', fileChooser.get_filename());
+        });
         this._addRow(1, "Logo image", fileChooser);
 
         let comboBox = new Gtk.ComboBoxText();
