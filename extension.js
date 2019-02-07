@@ -17,13 +17,10 @@
 const { Clutter, Gio, St } = imports.gi;
 
 const Background = imports.ui.background;
+const ExtensionUtils = imports.misc.extensionUtils;
 const Layout = imports.ui.layout;
 const Main = imports.ui.main;
 const Tweener = imports.ui.tweener;
-
-const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
 
 class BackgroundLogo {
     constructor(bgManager) {
@@ -31,7 +28,7 @@ class BackgroundLogo {
 
         this._logoFile = null;
 
-        this._settings = Convenience.getSettings();
+        this._settings = ExtensionUtils.getSettings();
 
         this._settings.connect('changed::logo-file',
                                this._updateLogo.bind(this));

@@ -7,7 +7,7 @@ sources = [
   'extension.js',
   'prefs.js'
 ]
-extra_sources = ['COPYING', 'convenience.js']
+extra_sources = ['COPYING']
 
 schemas = ['org.fedorahosted.background-logo-extension']
 

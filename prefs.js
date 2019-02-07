@@ -1,8 +1,6 @@
 const { Gdk, GdkPixbuf, Gio, GnomeDesktop, GObject, Gtk } = imports.gi;
 
 const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
 
 const BACKGROUND_SCHEMA = 'org.gnome.desktop.background';
 
@@ -20,7 +18,7 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
 
         this.connect('screen-changed', this._onScreenChanged.bind(this));
 
-        this._settings = Convenience.getSettings();
+        this._settings = ExtensionUtils.getSettings();
         this._settings.connect('changed', (settings, key) => {
             if (key == 'logo-file' ||
                 key == 'logo-size')
