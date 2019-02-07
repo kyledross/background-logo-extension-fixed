@@ -18,7 +18,7 @@ const BackgroundLogoPrefsWidget = new Lang.Class({
     Name: 'BackgroundLogoPrefsWidget',
     Extends: Gtk.Grid,
 
-    _init: function() {
+    _init() {
         this.parent({ halign: Gtk.Align.CENTER,
                       margin: 24,
                       column_spacing: 12,
@@ -78,7 +78,7 @@ const BackgroundLogoPrefsWidget = new Lang.Class({
         this.attach(checkWidget, 1, 6, 1, 1);
     },
 
-    _addRow: function(row, label, widget) {
+    _addRow(row, label, widget) {
         let margin = 48;
 
         widget.margin_end = margin;
@@ -93,7 +93,7 @@ const BackgroundLogoPrefsWidget = new Lang.Class({
         this.attach(widget, 1, row, 1, 1);
     },
 
-    _createAdjustment: function(key, step) {
+    _createAdjustment(key, step) {
         let schemaKey = this._settings.settings_schema.get_key(key);
         let [type, variant] = schemaKey.get_range().deep_unpack();
         if (type != 'range')
@@ -106,7 +106,7 @@ const BackgroundLogoPrefsWidget = new Lang.Class({
         return adj;
     },
 
-    _drawPreview: function(preview, cr) {
+    _drawPreview(preview, cr) {
         let width = preview.get_allocated_width();
         let height = preview.get_allocated_height();
 
@@ -123,7 +123,7 @@ const BackgroundLogoPrefsWidget = new Lang.Class({
         cr.paintWithAlpha(this._settings.get_uint('logo-opacity') / 255.0);
     },
 
-    _createBackgroundThumbnail: function(width, height) {
+    _createBackgroundThumbnail(width, height) {
         let settings = new Gio.Settings({ schema_id: BACKGROUND_SCHEMA });
         let uri = settings.get_default_value('picture-uri').deep_unpack();
         let file = Gio.File.new_for_commandline_arg(uri);
@@ -141,7 +141,7 @@ const BackgroundLogoPrefsWidget = new Lang.Class({
                                                GdkPixbuf.InterpType.BILINEAR);
     },
 
-    _createLogoThumbnail: function(width, height) {
+    _createLogoThumbnail(width, height) {
         let filename = this._settings.get_string('logo-file');
         let file = Gio.File.new_for_commandline_arg(filename);
         let pixbuf = GdkPixbuf.Pixbuf.new_from_file(file.get_path());
@@ -152,7 +152,7 @@ const BackgroundLogoPrefsWidget = new Lang.Class({
                                          GdkPixbuf.InterpType.BILINEAR);
     },
 
-    _getLogoPosition: function(width, height) {
+    _getLogoPosition(width, height) {
         let scaledBorder = this._settings.get_uint('logo-border') * this._scale;
         let x, y;
         switch (this._settings.get_string('logo-position')) {
@@ -176,7 +176,7 @@ const BackgroundLogoPrefsWidget = new Lang.Class({
         return [x, y];
     },
 
-    _onScreenChanged: function() {
+    _onScreenChanged() {
         let screen = this.get_screen();
         if (!screen)
             return;

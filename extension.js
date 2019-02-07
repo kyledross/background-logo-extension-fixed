@@ -31,7 +31,7 @@ const Convenience = Me.imports.convenience;
 const BackgroundLogo = new Lang.Class({
     Name: 'BackgroundLogo',
 
-    _init: function(bgManager) {
+    _init(bgManager) {
         this._bgManager = bgManager;
 
         this._logoFile = null;
@@ -86,7 +86,7 @@ const BackgroundLogo = new Lang.Class({
         this._updateVisibility();
     },
 
-    _updateLogo: function() {
+    _updateLogo() {
         let filename = this._settings.get_string('logo-file');
         let file = Gio.File.new_for_commandline_arg(filename);
         if (this._logoFile && this._logoFile.equal(file))
@@ -97,7 +97,7 @@ const BackgroundLogo = new Lang.Class({
         this._updateLogoTexture();
     },
 
-    _updateLogoTexture: function() {
+    _updateLogoTexture() {
         if (this._icon)
             this._icon.destroy();
 
@@ -112,7 +112,7 @@ const BackgroundLogo = new Lang.Class({
         this._bin.add_actor(this._icon);
     },
 
-    _updateScale: function() {
+    _updateScale() {
         if (this._icon.width == 0)
             return;
 
@@ -130,7 +130,7 @@ const BackgroundLogo = new Lang.Class({
         this._icon.set_size(width, height);
     },
 
-    _updatePosition: function() {
+    _updatePosition() {
         let xAlign, yAlign;
         switch (this._settings.get_string('logo-position')) {
             case 'center':
@@ -154,12 +154,12 @@ const BackgroundLogo = new Lang.Class({
         this._bin.y_align = yAlign;
     },
 
-    _updateBorder: function() {
+    _updateBorder() {
         let border = this._settings.get_uint('logo-border');
         this.actor.style = 'padding: %dpx;'.format(border);
     },
 
-    _updateVisibility: function() {
+    _updateVisibility() {
         let background = this._bgManager.backgroundActor.background._delegate;
         let defaultUri = background._settings.get_default_value('picture-uri');
         let file = Gio.File.new_for_commandline_arg(defaultUri.deep_unpack());
@@ -181,7 +181,7 @@ const BackgroundLogo = new Lang.Class({
                          });
     },
 
-    _backgroundDestroyed: function() {
+    _backgroundDestroyed() {
         this._bgDestroyedId = 0;
 
         if (this._bgManager._backgroundSource) // background swapped
@@ -192,7 +192,7 @@ const BackgroundLogo = new Lang.Class({
             this.actor.destroy();
     },
 
-    _onDestroy: function() {
+    _onDestroy() {
         this._settings.run_dispose();
         this._settings = null;
 
