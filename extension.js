@@ -16,7 +16,6 @@
  */
 const Clutter = imports.gi.Clutter;
 const Gio = imports.gi.Gio;
-const Lang = imports.lang;
 const St = imports.gi.St;
 
 const Background = imports.ui.background;
@@ -28,10 +27,8 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 
-const BackgroundLogo = new Lang.Class({
-    Name: 'BackgroundLogo',
-
-    _init(bgManager) {
+class BackgroundLogo {
+    constructor(bgManager) {
         this._bgManager = bgManager;
 
         this._logoFile = null;
@@ -84,7 +81,7 @@ const BackgroundLogo = new Lang.Class({
         this._bgChangedId =
             bgManager.connect('changed', this._updateVisibility.bind(this));
         this._updateVisibility();
-    },
+    }
 
     _updateLogo() {
         let filename = this._settings.get_string('logo-file');
@@ -95,7 +92,7 @@ const BackgroundLogo = new Lang.Class({
         this._logoFile = file;
 
         this._updateLogoTexture();
-    },
+    }
 
     _updateLogoTexture() {
         if (this._icon)
@@ -110,7 +107,7 @@ const BackgroundLogo = new Lang.Class({
         this._icon.connect('allocation-changed',
                            this._updateScale.bind(this));
         this._bin.add_actor(this._icon);
-    },
+    }
 
     _updateScale() {
         if (this._icon.width == 0)
@@ -128,7 +125,7 @@ const BackgroundLogo = new Lang.Class({
             return;
         }
         this._icon.set_size(width, height);
-    },
+    }
 
     _updatePosition() {
         let xAlign, yAlign;
@@ -152,12 +149,12 @@ const BackgroundLogo = new Lang.Class({
         }
         this._bin.x_align = xAlign;
         this._bin.y_align = yAlign;
-    },
+    }
 
     _updateBorder() {
         let border = this._settings.get_uint('logo-border');
         this.actor.style = 'padding: %dpx;'.format(border);
-    },
+    }
 
     _updateVisibility() {
         let background = this._bgManager.backgroundActor.background._delegate;
@@ -179,7 +176,7 @@ const BackgroundLogo = new Lang.Class({
                            time: Background.FADE_ANIMATION_TIME,
                            transition: 'easeOutQuad'
                          });
-    },
+    }
 
     _backgroundDestroyed() {
         this._bgDestroyedId = 0;
@@ -190,7 +187,7 @@ const BackgroundLogo = new Lang.Class({
                                                         this._backgroundDestroyed.bind(this));
         else // bgManager destroyed
             this.actor.destroy();
-    },
+    }
 
     _onDestroy() {
         this._settings.run_dispose();
@@ -208,7 +205,7 @@ const BackgroundLogo = new Lang.Class({
 
         this._logoFile = null;
     }
-});
+}
 
 
 let monitorsChangedId = 0;

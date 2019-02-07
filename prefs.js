@@ -2,9 +2,8 @@ const Gdk = imports.gi.Gdk;
 const GdkPixbuf = imports.gi.GdkPixbuf;
 const Gio = imports.gi.Gio;
 const GnomeDesktop = imports.gi.GnomeDesktop;
+const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
-
-const Lang = imports.lang;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
@@ -14,15 +13,15 @@ const BACKGROUND_SCHEMA = 'org.gnome.desktop.background';
 
 const PREVIEW_WIDTH = 400;
 
-const BackgroundLogoPrefsWidget = new Lang.Class({
-    Name: 'BackgroundLogoPrefsWidget',
-    Extends: Gtk.Grid,
-
+let BackgroundLogoPrefsWidget = GObject.registerClass(
+class BackgroundLogoPrefsWidget extends Gtk.Grid {
     _init() {
-        this.parent({ halign: Gtk.Align.CENTER,
-                      margin: 24,
-                      column_spacing: 12,
-                      row_spacing: 6 });
+        super._init({
+            halign: Gtk.Align.CENTER,
+            margin: 24,
+            column_spacing: 12,
+            row_spacing: 6
+        });
 
         this.connect('screen-changed', this._onScreenChanged.bind(this));
 
@@ -76,7 +75,7 @@ const BackgroundLogoPrefsWidget = new Lang.Class({
         this._settings.bind('logo-always-visible', checkWidget, 'active',
                             Gio.SettingsBindFlags.DEFAULT);
         this.attach(checkWidget, 1, 6, 1, 1);
-    },
+    }
 
     _addRow(row, label, widget) {
         let margin = 48;
@@ -91,7 +90,7 @@ const BackgroundLogoPrefsWidget = new Lang.Class({
         this.attach(new Gtk.Label({ label: label, xalign: 1.0,
                                     margin_start: margin }), 0, row, 1, 1);
         this.attach(widget, 1, row, 1, 1);
-    },
+    }
 
     _createAdjustment(key, step) {
         let schemaKey = this._settings.settings_schema.get_key(key);
@@ -104,7 +103,7 @@ const BackgroundLogoPrefsWidget = new Lang.Class({
                                        page_increment: 10 * step });
         this._settings.bind(key, adj, 'value', Gio.SettingsBindFlags.DEFAULT);
         return adj;
-    },
+    }
 
     _drawPreview(preview, cr) {
         let width = preview.get_allocated_width();
@@ -121,7 +120,7 @@ const BackgroundLogoPrefsWidget = new Lang.Class({
         let [x, y] = this._getLogoPosition(width, height);
         Gdk.cairo_set_source_pixbuf(cr, this._logo, x, y);
         cr.paintWithAlpha(this._settings.get_uint('logo-opacity') / 255.0);
-    },
+    }
 
     _createBackgroundThumbnail(width, height) {
         let settings = new Gio.Settings({ schema_id: BACKGROUND_SCHEMA });
@@ -139,7 +138,7 @@ const BackgroundLogoPrefsWidget = new Lang.Class({
         let pixbuf = GdkPixbuf.Pixbuf.new_from_file(file.get_path());
         this._background = pixbuf.scale_simple(width, height,
                                                GdkPixbuf.InterpType.BILINEAR);
-    },
+    }
 
     _createLogoThumbnail(width, height) {
         let filename = this._settings.get_string('logo-file');
@@ -150,7 +149,7 @@ const BackgroundLogoPrefsWidget = new Lang.Class({
         this._logo = pixbuf.scale_simple(size * width,
                                          size * width / ratio,
                                          GdkPixbuf.InterpType.BILINEAR);
-    },
+    }
 
     _getLogoPosition(width, height) {
         let scaledBorder = this._settings.get_uint('logo-border') * this._scale;
@@ -174,7 +173,7 @@ const BackgroundLogoPrefsWidget = new Lang.Class({
                 break;
         }
         return [x, y];
-    },
+    }
 
     _onScreenChanged() {
         let screen = this.get_screen();
