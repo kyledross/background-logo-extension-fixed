@@ -208,45 +208,51 @@ class BackgroundLogo {
 }
 
 
-let monitorsChangedId = 0;
-let startupPreparedId = 0;
-let logos = [];
+class Extension {
+    constructor() {
+        this._monitorsChangedId = 0;
+        this._startupPreparedId = 0;
+        this._logos = [];
+    }
 
-function forEachBackgroundManager(func) {
-    Main.overview._bgManagers.forEach(func);
-    Main.layoutManager._bgManagers.forEach(func);
-}
+    _forEachBackgroundManager(func) {
+        Main.overview._bgManagers.forEach(func);
+        Main.layoutManager._bgManagers.forEach(func);
+    }
 
-function addLogo() {
-    destroyLogo();
-    forEachBackgroundManager(function(bgManager) {
-        logos.push(new BackgroundLogo(bgManager));
-    });
-}
+    _addLogo() {
+        this._destroyLogo();
+        this._forEachBackgroundManager(bgManager => {
+            this._logos.push(new BackgroundLogo(bgManager));
+        });
+    }
 
-function destroyLogo() {
-    logos.forEach(function(l) { l.actor.destroy(); });
-    logos = [];
+    _destroyLogo() {
+        this._logos.forEach(l => { l.actor.destroy(); });
+        this._logos = [];
+    }
+
+    enable() {
+        this._monitorsChangedId =
+            Main.layoutManager.connect('monitors-changed', this._addLogo.bind(this));
+        this._startupPreparedId =
+            Main.layoutManager.connect('startup-prepared', this._addLogo.bind(this));
+        this._addLogo();
+    }
+
+    disable() {
+        if (this._monitorsChangedId)
+            Main.layoutManager.disconnect(this._monitorsChangedId);
+        this._monitorsChangedId = 0;
+
+        if (this._startupPreparedId)
+            Main.layoutManager.disconnect(this._startupPreparedId);
+        this._startupPreparedId = 0;
+
+        this._destroyLogo();
+    }
 }
 
 function init() {
-}
-
-function enable() {
-
-    monitorsChangedId = Main.layoutManager.connect('monitors-changed', addLogo);
-    startupPreparedId = Main.layoutManager.connect('startup-prepared', addLogo);
-    addLogo();
-}
-
-function disable() {
-    if (monitorsChangedId)
-        Main.layoutManager.disconnect(monitorsChangedId);
-    monitorsChangedId = 0;
-
-    if (startupPreparedId)
-        Main.layoutManager.disconnect(startupPreparedId);
-    startupPreparedId = 0;
-
-    destroyLogo();
+    return new Extension();
 }
