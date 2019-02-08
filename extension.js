@@ -99,11 +99,7 @@ class BackgroundLogo {
             this._icon.destroy();
 
         let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-        if (this._textureCache.load_file_async) { // > 3.14
-            this._icon = this._textureCache.load_file_async(this._logoFile, -1, -1, scaleFactor);
-        } else { // <= 3.14
-            this._icon = this._textureCache.load_uri_async(this._logoFile.get_uri(), -1, -1, scaleFactor);
-        }
+        this._icon = this._textureCache.load_file_async(this._logoFile, -1, -1, scaleFactor);
         this._icon.connect('allocation-changed',
                            this._updateScale.bind(this));
         this._bin.add_actor(this._icon);
