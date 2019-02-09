@@ -14,9 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
-const Clutter = imports.gi.Clutter;
-const Gio = imports.gi.Gio;
-const St = imports.gi.St;
+const { Clutter, Gio, St } = imports.gi;
 
 const Background = imports.ui.background;
 const Layout = imports.ui.layout;
