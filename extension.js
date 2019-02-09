@@ -206,7 +206,7 @@ class Extension {
     constructor() {
         this._monitorsChangedId = 0;
         this._startupPreparedId = 0;
-        this._logos = [];
+        this._logos = new Set();
     }
 
     _forEachBackgroundManager(func) {
@@ -217,13 +217,16 @@ class Extension {
     _addLogo() {
         this._destroyLogo();
         this._forEachBackgroundManager(bgManager => {
-            this._logos.push(new BackgroundLogo(bgManager));
+            let logo = new BackgroundLogo(bgManager);
+            logo.actor.connect('destroy', () => {
+                this._logos.delete(logo);
+            });
+            this._logos.add(logo);
         });
     }
 
     _destroyLogo() {
         this._logos.forEach(l => { l.actor.destroy(); });
-        this._logos = [];
     }
 
     enable() {
