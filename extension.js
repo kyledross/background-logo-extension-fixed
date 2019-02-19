@@ -14,13 +14,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
-const { Clutter, Gio, St } = imports.gi;
+const { Clutter, Gio, GObject, St } = imports.gi;
 
 const Background = imports.ui.background;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Layout = imports.ui.layout;
 const Main = imports.ui.main;
 const Tweener = imports.ui.tweener;
+
+var IconContainer = GObject.registerClass(
+class IconContainer extends St.Widget {
+    _init(params) {
+        super._init(params);
+
+        this.connect('notify::scale-x', () => {
+            this.queue_relayout();
+        });
+        this.connect('notify::scale-y', () => {
+            this.queue_relayout();
+        });
+    }
+
+    vfunc_get_preferred_width(forHeight) {
+        let width = super.vfunc_get_preferred_width(forHeight);
+        return width.map(w => w * this.scale_x);
+    }
+
+    vfunc_get_preferred_height(forWidth) {
+        let height = super.vfunc_get_preferred_height(forWidth);
+        return height.map(h => h * this.scale_y);
+    }
+});
 
 class BackgroundLogo {
     constructor(bgManager) {
@@ -59,8 +83,10 @@ class BackgroundLogo {
                                                         work_area: true });
         this.actor.add_constraint(constraint);
 
-        this._bin = new St.Widget({ x_expand: true, y_expand: true });
+        this._bin = new IconContainer({ x_expand: true, y_expand: true });
         this.actor.add_actor(this._bin);
+        this._bin.connect('notify::resource-scale',
+            this._updateLogoTexture.bind(this));
 
         this._settings.bind('logo-opacity', this._bin, 'opacity',
                             Gio.SettingsBindFlags.DEFAULT);
@@ -100,8 +126,8 @@ class BackgroundLogo {
 
         let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
         this._icon = this._textureCache.load_file_async(this._logoFile, -1, -1, scaleFactor, resourceScale);
-        this._icon.connect('allocation-changed',
-                           this._updateScale.bind(this));
+        this._icon.connect('notify::content',
+            this._updateScale.bind(this));
         this._bin.add_actor(this._icon);
     }
 
@@ -109,18 +135,15 @@ class BackgroundLogo {
         if (this._icon == null || this._icon.width == 0)
             return;
 
+        let monitorIndex = this._bgManager._monitorIndex;
+        let {
+            width: monitorWidth
+        } = Main.layoutManager.getWorkAreaForMonitor(monitorIndex);
+
         let size = this._settings.get_double('logo-size');
-        let width = this.actor.width * size / 100;
-        let height = this._icon.height * width / this._icon.width;
-        if (Math.abs(this._icon.height - height) < 1.0 &&
-            Math.abs(this._icon.width - width) < 1.0) {
-            // size of icon would not significantly change, so don't
-            // update the size to avoid recursion in case the
-            // manually set size differs just minimal from the eventually
-            // allocated size
-            return;
-        }
-        this._icon.set_size(width, height);
+        let width = monitorWidth * size / 100;
+        let scale = width / this._icon.width;
+        this._bin.set_scale(scale, scale);
     }
 
     _updatePosition() {
