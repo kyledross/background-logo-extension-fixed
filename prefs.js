@@ -26,16 +26,20 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
             this._preview.queue_draw();
         });
 
-        this._preview = new Gtk.DrawingArea({ halign: Gtk.Align.CENTER,
-                                              margin_bottom: 18 });
+        this._preview = new Gtk.DrawingArea({
+            halign: Gtk.Align.CENTER,
+            margin_bottom: 18
+        });
         this._preview.connect('draw', this._drawPreview.bind(this));
         this.attach(this._preview, 0, 0, 2, 1);
 
         let filter = new Gtk.FileFilter();
         filter.add_pixbuf_formats();
 
-        let fileChooser = new Gtk.FileChooserButton({ title: "Select an Image",
-                                                      filter: filter });
+        let fileChooser = new Gtk.FileChooserButton({
+            title: "Select an Image",
+            filter: filter
+        });
         fileChooser.set_filename(this._settings.get_string('logo-file'));
         fileChooser.connect('file-set',  () => {
             this._settings.set_string('logo-file', fileChooser.get_filename());
@@ -63,7 +67,9 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
         scale = new Gtk.Scale({ adjustment, draw_value: false });
         this._addRow(5, "Opacity", scale);
 
-        let checkWidget = new Gtk.CheckButton({ label: "Show for all backgrounds" });
+        let checkWidget = new Gtk.CheckButton({
+            label: "Show for all backgrounds"
+        });
         this._settings.bind('logo-always-visible', checkWidget, 'active',
                             Gio.SettingsBindFlags.DEFAULT);
         this.attach(checkWidget, 1, 6, 1, 1);
@@ -76,11 +82,16 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
         widget.hexpand = true;
 
         if (!this._sizeGroup)
-            this._sizeGroup = new Gtk.SizeGroup({ mode: Gtk.SizeGroupMode.VERTICAL });
+            this._sizeGroup = new Gtk.SizeGroup({
+                mode: Gtk.SizeGroupMode.VERTICAL
+            });
         this._sizeGroup.add_widget(widget);
 
-        this.attach(new Gtk.Label({ label: label, xalign: 1.0,
-                                    margin_start: margin }), 0, row, 1, 1);
+        this.attach(new Gtk.Label({
+            label,
+            xalign: 1.0,
+            margin_start: margin
+        }), 0, row, 1, 1);
         this.attach(widget, 1, row, 1, 1);
     }
 
@@ -90,9 +101,12 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
         if (type != 'range')
             throw new Error('Invalid key type "%s" for adjustment'.format(type));
         let [lower, upper] = variant.deep_unpack();
-        let adj = new Gtk.Adjustment({ lower, upper,
-                                       step_increment: step,
-                                       page_increment: 10 * step });
+        let adj = new Gtk.Adjustment({
+            lower,
+            upper,
+            step_increment: step,
+            page_increment: 10 * step
+        });
         this._settings.bind(key, adj, 'value', Gio.SettingsBindFlags.DEFAULT);
         return adj;
     }

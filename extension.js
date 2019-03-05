@@ -73,8 +73,10 @@ class BackgroundLogo {
             this._updateLogoTexture();
         });
 
-        this.actor = new St.Widget({ layout_manager: new Clutter.BinLayout(),
-                                     opacity: 0 });
+        this.actor = new St.Widget({
+            layout_manager: new Clutter.BinLayout(),
+            opacity: 0
+        });
         bgManager._container.add_actor(this.actor);
 
         this.actor.connect('destroy', this._onDestroy.bind(this));
@@ -201,11 +203,11 @@ class BackgroundLogo {
         else // background == NONE
             visible = false;
 
-        Tweener.addTween(this.actor,
-                         { opacity: visible ? 255 : 0,
-                           time: Background.FADE_ANIMATION_TIME,
-                           transition: 'easeOutQuad'
-                         });
+        Tweener.addTween(this.actor, {
+            opacity: visible ? 255 : 0,
+            time: Background.FADE_ANIMATION_TIME,
+            transition: 'easeOutQuad'
+        });
     }
 
     _backgroundDestroyed() {
