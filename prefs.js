@@ -147,22 +147,22 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
         let scaledBorder = this._settings.get_uint('logo-border') * this._scale;
         let x, y;
         switch (this._settings.get_string('logo-position')) {
-            case 'center':
-                x = (width - this._logo.get_width()) / 2;
-                y = (height - this._logo.get_height()) / 2;
-                break;
-            case 'bottom-left':
-                x = scaledBorder;
-                y = height - this._logo.get_height() - scaledBorder;
-                break;
-            case 'bottom-center':
-                x = (width - this._logo.get_width()) / 2;
-                y = height - this._logo.get_height() - scaledBorder;
-                break;
-            case 'bottom-right':
-                x = width - this._logo.get_width() - scaledBorder;
-                y = height - this._logo.get_height() - scaledBorder;
-                break;
+        case 'center':
+            x = (width - this._logo.get_width()) / 2;
+            y = (height - this._logo.get_height()) / 2;
+            break;
+        case 'bottom-left':
+            x = scaledBorder;
+            y = height - this._logo.get_height() - scaledBorder;
+            break;
+        case 'bottom-center':
+            x = (width - this._logo.get_width()) / 2;
+            y = height - this._logo.get_height() - scaledBorder;
+            break;
+        case 'bottom-right':
+            x = width - this._logo.get_width() - scaledBorder;
+            y = height - this._logo.get_height() - scaledBorder;
+            break;
         }
         return [x, y];
     }

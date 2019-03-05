@@ -160,22 +160,22 @@ class BackgroundLogo {
     _updatePosition() {
         let xAlign, yAlign;
         switch (this._settings.get_string('logo-position')) {
-            case 'center':
-                xAlign = Clutter.ActorAlign.CENTER;
-                yAlign = Clutter.ActorAlign.CENTER;
-                break;
-            case 'bottom-left':
-                xAlign = Clutter.ActorAlign.START;
-                yAlign = Clutter.ActorAlign.END;
-                break;
-            case 'bottom-center':
-                xAlign = Clutter.ActorAlign.CENTER;
-                yAlign = Clutter.ActorAlign.END;
-                break;
-            case 'bottom-right':
-                xAlign = Clutter.ActorAlign.END;
-                yAlign = Clutter.ActorAlign.END;
-                break;
+        case 'center':
+            xAlign = Clutter.ActorAlign.CENTER;
+            yAlign = Clutter.ActorAlign.CENTER;
+            break;
+        case 'bottom-left':
+            xAlign = Clutter.ActorAlign.START;
+            yAlign = Clutter.ActorAlign.END;
+            break;
+        case 'bottom-center':
+            xAlign = Clutter.ActorAlign.CENTER;
+            yAlign = Clutter.ActorAlign.END;
+            break;
+        case 'bottom-right':
+            xAlign = Clutter.ActorAlign.END;
+            yAlign = Clutter.ActorAlign.END;
+            break;
         }
         this._bin.x_align = xAlign;
         this._bin.y_align = yAlign;
