@@ -56,15 +56,15 @@ class BackgroundLogo {
         this._settings = ExtensionUtils.getSettings();
 
         this._settings.connect('changed::logo-file',
-                               this._updateLogo.bind(this));
+            this._updateLogo.bind(this));
         this._settings.connect('changed::logo-size',
-                               this._updateScale.bind(this));
+            this._updateScale.bind(this));
         this._settings.connect('changed::logo-position',
-                               this._updatePosition.bind(this));
+            this._updatePosition.bind(this));
         this._settings.connect('changed::logo-border',
-                               this._updateBorder.bind(this));
+            this._updateBorder.bind(this));
         this._settings.connect('changed::logo-always-visible',
-                               this._updateVisibility.bind(this));
+            this._updateVisibility.bind(this));
 
         this._textureCache = St.TextureCache.get_default();
         this._textureCache.connect('texture-file-changed', (cache, file) => {
@@ -92,19 +92,19 @@ class BackgroundLogo {
         this._bin.connect('notify::resource-scale',
             this._updateLogoTexture.bind(this));
 
-        this._settings.bind('logo-opacity', this._bin, 'opacity',
-                            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('logo-opacity',
+            this._bin, 'opacity',
+            Gio.SettingsBindFlags.DEFAULT);
 
         this._updateLogo();
         this._updatePosition();
         this._updateBorder();
 
-        this._bgDestroyedId =
-            bgManager.backgroundActor.connect('destroy',
-                                              this._backgroundDestroyed.bind(this));
+        this._bgDestroyedId = bgManager.backgroundActor.connect('destroy',
+            this._backgroundDestroyed.bind(this));
 
-        this._bgChangedId =
-            bgManager.connect('changed', this._updateVisibility.bind(this));
+        this._bgChangedId = bgManager.connect('changed',
+            this._updateVisibility.bind(this));
         this._updateVisibility();
     }
 
@@ -216,7 +216,7 @@ class BackgroundLogo {
         if (this._bgManager._backgroundSource) // background swapped
             this._bgDestroyedId =
                 this._bgManager.backgroundActor.connect('destroy',
-                                                        this._backgroundDestroyed.bind(this));
+                    this._backgroundDestroyed.bind(this));
         else // bgManager destroyed
             this.actor.destroy();
     }

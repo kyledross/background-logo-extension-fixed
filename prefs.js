@@ -51,8 +51,9 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
         comboBox.append('bottom-left', 'Bottom left');
         comboBox.append('bottom-center', 'Bottom center');
         comboBox.append('bottom-right', 'Bottom right');
-        this._settings.bind('logo-position', comboBox, 'active-id',
-                            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('logo-position',
+            comboBox, 'active-id',
+            Gio.SettingsBindFlags.DEFAULT);
         this._addRow(2, 'Position', comboBox);
 
         let adjustment = this._createAdjustment('logo-size', 0.25);
@@ -70,8 +71,9 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
         let checkWidget = new Gtk.CheckButton({
             label: 'Show for all backgrounds'
         });
-        this._settings.bind('logo-always-visible', checkWidget, 'active',
-                            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('logo-always-visible',
+            checkWidget, 'active',
+            Gio.SettingsBindFlags.DEFAULT);
         this.attach(checkWidget, 1, 6, 1, 1);
     }
 
@@ -142,8 +144,8 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
             file = Gio.File.new_for_commandline_arg(filename1);
         }
         let pixbuf = GdkPixbuf.Pixbuf.new_from_file(file.get_path());
-        this._background = pixbuf.scale_simple(width, height,
-                                               GdkPixbuf.InterpType.BILINEAR);
+        this._background = pixbuf.scale_simple(
+            width, height, GdkPixbuf.InterpType.BILINEAR);
     }
 
     _createLogoThumbnail(width) {
@@ -152,9 +154,10 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
         let pixbuf = GdkPixbuf.Pixbuf.new_from_file(file.get_path());
         let size = this._settings.get_double('logo-size') / 100;
         let ratio = pixbuf.get_width() / pixbuf.get_height();
-        this._logo = pixbuf.scale_simple(size * width,
-                                         size * width / ratio,
-                                         GdkPixbuf.InterpType.BILINEAR);
+        this._logo = pixbuf.scale_simple(
+            size * width,
+            size * width / ratio,
+            GdkPixbuf.InterpType.BILINEAR);
     }
 
     _getLogoPosition(width, height) {
@@ -188,8 +191,9 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
 
         let rect = screen.get_monitor_geometry(screen.get_primary_monitor());
         this._scale = PREVIEW_WIDTH / rect.width;
-        this._preview.set_size_request(PREVIEW_WIDTH,
-                                       PREVIEW_WIDTH * rect.height / rect.width);
+        this._preview.set_size_request(
+            PREVIEW_WIDTH,
+            PREVIEW_WIDTH * rect.height / rect.width);
     }
 });
 
