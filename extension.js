@@ -92,16 +92,21 @@ class BackgroundLogo {
     _updateLogoTexture() {
         if (this._icon)
             this._icon.destroy();
+        this._icon = null;
+
+        let [valid, resourceScale] = this._bin.get_resource_scale();
+        if (!valid)
+            return;
 
         let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-        this._icon = this._textureCache.load_file_async(this._logoFile, -1, -1, scaleFactor);
+        this._icon = this._textureCache.load_file_async(this._logoFile, -1, -1, scaleFactor, resourceScale);
         this._icon.connect('allocation-changed',
                            this._updateScale.bind(this));
         this._bin.add_actor(this._icon);
     }
 
     _updateScale() {
-        if (this._icon.width == 0)
+        if (this._icon == null || this._icon.width == 0)
             return;
 
         let size = this._settings.get_double('logo-size');
