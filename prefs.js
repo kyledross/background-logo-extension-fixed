@@ -37,38 +37,38 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
         filter.add_pixbuf_formats();
 
         let fileChooser = new Gtk.FileChooserButton({
-            title: "Select an Image",
+            title: 'Select an Image',
             filter: filter
         });
         fileChooser.set_filename(this._settings.get_string('logo-file'));
         fileChooser.connect('file-set',  () => {
             this._settings.set_string('logo-file', fileChooser.get_filename());
         });
-        this._addRow(1, "Logo image", fileChooser);
+        this._addRow(1, 'Logo image', fileChooser);
 
         let comboBox = new Gtk.ComboBoxText();
-        comboBox.append('center', "Center");
-        comboBox.append('bottom-left', "Bottom left");
-        comboBox.append('bottom-center', "Bottom center");
-        comboBox.append('bottom-right', "Bottom right");
+        comboBox.append('center', 'Center');
+        comboBox.append('bottom-left', 'Bottom left');
+        comboBox.append('bottom-center', 'Bottom center');
+        comboBox.append('bottom-right', 'Bottom right');
         this._settings.bind('logo-position', comboBox, 'active-id',
                             Gio.SettingsBindFlags.DEFAULT);
-        this._addRow(2, "Position", comboBox);
+        this._addRow(2, 'Position', comboBox);
 
         let adjustment = this._createAdjustment('logo-size', 0.25);
         let scale = new Gtk.Scale({ adjustment, draw_value: false });
-        this._addRow(3, "Size", scale);
+        this._addRow(3, 'Size', scale);
 
         adjustment = this._createAdjustment('logo-border', 1.0);
         scale = new Gtk.Scale({ adjustment, draw_value: false });
-        this._addRow(4, "Border", scale);
+        this._addRow(4, 'Border', scale);
 
         adjustment = this._createAdjustment('logo-opacity', 1.0);
         scale = new Gtk.Scale({ adjustment, draw_value: false });
-        this._addRow(5, "Opacity", scale);
+        this._addRow(5, 'Opacity', scale);
 
         let checkWidget = new Gtk.CheckButton({
-            label: "Show for all backgrounds"
+            label: 'Show for all backgrounds'
         });
         this._settings.bind('logo-always-visible', checkWidget, 'active',
                             Gio.SettingsBindFlags.DEFAULT);
