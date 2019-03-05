@@ -264,7 +264,7 @@ class Extension {
     }
 
     _destroyLogo() {
-        this._logos.forEach(l => { l.actor.destroy(); });
+        this._logos.forEach(l => l.actor.destroy());
     }
 
     enable() {
