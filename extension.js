@@ -1,3 +1,4 @@
+/* exported init */
 /*
  * Copyright 2014 Red Hat, Inc
  *

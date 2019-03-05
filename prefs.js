@@ -1,3 +1,4 @@
+/* exported init, buildPrefsWidget */
 const { Gdk, GdkPixbuf, Gio, GnomeDesktop, GObject, Gtk } = imports.gi;
 
 const ExtensionUtils = imports.misc.extensionUtils;
