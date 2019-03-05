@@ -52,16 +52,15 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
         this._addRow(2, "Position", comboBox);
 
         let adjustment = this._createAdjustment('logo-size', 0.25);
-        let scale = new Gtk.Scale({ adjustment: adjustment,
-                                    draw_value: false });
+        let scale = new Gtk.Scale({ adjustment, draw_value: false });
         this._addRow(3, "Size", scale);
 
         adjustment = this._createAdjustment('logo-border', 1.0);
-        scale = new Gtk.Scale({ adjustment: adjustment, draw_value: false });
+        scale = new Gtk.Scale({ adjustment, draw_value: false });
         this._addRow(4, "Border", scale);
 
         adjustment = this._createAdjustment('logo-opacity', 1.0);
-        scale = new Gtk.Scale({ adjustment: adjustment, draw_value: false });
+        scale = new Gtk.Scale({ adjustment, draw_value: false });
         this._addRow(5, "Opacity", scale);
 
         let checkWidget = new Gtk.CheckButton({ label: "Show for all backgrounds" });
@@ -90,8 +89,8 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
         let [type, variant] = schemaKey.get_range().deep_unpack();
         if (type != 'range')
             throw new Error('Invalid key type "%s" for adjustment'.format(type));
-        let [min, max] = variant.deep_unpack();
-        let adj = new Gtk.Adjustment({ lower: min, upper: max,
+        let [lower, upper] = variant.deep_unpack();
+        let adj = new Gtk.Adjustment({ lower, upper,
                                        step_increment: step,
                                        page_increment: 10 * step });
         this._settings.bind(key, adj, 'value', Gio.SettingsBindFlags.DEFAULT);
