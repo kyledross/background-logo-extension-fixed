@@ -107,7 +107,7 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
         cr.paint();
 
         if (!this._logo)
-            this._createLogoThumbnail(width, height);
+            this._createLogoThumbnail(width);
 
         let [x, y] = this._getLogoPosition(width, height);
         Gdk.cairo_set_source_pixbuf(cr, this._logo, x, y);
@@ -132,7 +132,7 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
                                                GdkPixbuf.InterpType.BILINEAR);
     }
 
-    _createLogoThumbnail(width, height) {
+    _createLogoThumbnail(width) {
         let filename = this._settings.get_string('logo-file');
         let file = Gio.File.new_for_commandline_arg(filename);
         let pixbuf = GdkPixbuf.Pixbuf.new_from_file(file.get_path());
