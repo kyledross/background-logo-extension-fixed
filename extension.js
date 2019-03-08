@@ -49,6 +49,7 @@ class IconContainer extends St.Widget {
 class BackgroundLogo {
     constructor(bgManager) {
         this._bgManager = bgManager;
+        this._monitorIndex = bgManager._monitorIndex;
 
         this._logoFile = null;
 
@@ -78,9 +79,10 @@ class BackgroundLogo {
 
         this.actor.connect('destroy', this._onDestroy.bind(this));
 
-        let monitorIndex = bgManager._monitorIndex;
-        let constraint = new Layout.MonitorConstraint({ index: monitorIndex,
-                                                        work_area: true });
+        let constraint = new Layout.MonitorConstraint({
+            index: this._monitorIndex,
+            work_area: true
+        });
         this.actor.add_constraint(constraint);
 
         this._bin = new IconContainer({ x_expand: true, y_expand: true });
@@ -115,6 +117,15 @@ class BackgroundLogo {
         this._updateLogoTexture();
     }
 
+    _getWorkArea() {
+        return Main.layoutManager.getWorkAreaForMonitor(this._monitorIndex);
+    }
+
+    _getWidthForRelativeSize(size) {
+        let { width } = this._getWorkArea();
+        return width * size / 100;
+    }
+
     _updateLogoTexture() {
         if (this._icon)
             this._icon.destroy();
@@ -124,8 +135,13 @@ class BackgroundLogo {
         if (!valid)
             return;
 
+        let key = this._settings.settings_schema.get_key('logo-size');
+        let [, range] = key.get_range().deep_unpack();
+        let [, max] = range.deep_unpack();
+        let width = this._getWidthForRelativeSize(max);
+
         let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-        this._icon = this._textureCache.load_file_async(this._logoFile, -1, -1, scaleFactor, resourceScale);
+        this._icon = this._textureCache.load_file_async(this._logoFile, width, -1, scaleFactor, resourceScale);
         this._icon.connect('notify::content',
             this._updateScale.bind(this));
         this._bin.add_actor(this._icon);
@@ -135,13 +151,8 @@ class BackgroundLogo {
         if (this._icon == null || this._icon.width == 0)
             return;
 
-        let monitorIndex = this._bgManager._monitorIndex;
-        let {
-            width: monitorWidth
-        } = Main.layoutManager.getWorkAreaForMonitor(monitorIndex);
-
         let size = this._settings.get_double('logo-size');
-        let width = monitorWidth * size / 100;
+        let width = this._getWidthForRelativeSize(size);
         let scale = width / this._icon.width;
         this._bin.set_scale(scale, scale);
     }
