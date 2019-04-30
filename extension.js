@@ -197,10 +197,8 @@ class BackgroundLogo {
         let visible;
         if (this._settings.get_boolean('logo-always-visible'))
             visible = true;
-        else if (background._file) // > 3.14
+        else if (background._file)
             visible = background._file.equal(file);
-        else if (background._filename) // <= 3.14
-            visible = background._filename == file.get_path();
         else // background == NONE
             visible = false;
 
