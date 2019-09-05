@@ -39,7 +39,7 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
 
         let fileChooser = new Gtk.FileChooserButton({
             title: 'Select an Image',
-            filter: filter
+            filter,
         });
         fileChooser.set_filename(this._settings.get_string('logo-file'));
         fileChooser.connect('file-set',  () => {
