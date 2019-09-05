@@ -46,8 +46,19 @@ class IconContainer extends St.Widget {
     }
 });
 
-var BackgroundLogo = GObject.registerClass(
-class BackgroundLogo extends St.Widget {
+var BackgroundLogo = GObject.registerClass({
+    Properties: {
+        // For compatibility with Meta.BackgroundActor
+        'brightness': GObject.ParamSpec.double(
+            'brightness', 'brightness', 'brightness',
+            GObject.ParamFlags.READWRITE,
+            0, 1, 1),
+        'vignette-sharpness': GObject.ParamSpec.double(
+            'vignette-sharpness', 'vignette-sharpness', 'vignette-sharpness',
+            GObject.ParamFlags.READWRITE,
+            0, 1, 0),
+    },
+}, class BackgroundLogo extends St.Widget {
     _init(bgManager) {
         this._bgManager = bgManager;
         this._monitorIndex = bgManager._monitorIndex;
