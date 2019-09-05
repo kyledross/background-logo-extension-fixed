@@ -14,7 +14,7 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
             halign: Gtk.Align.CENTER,
             margin: 24,
             column_spacing: 12,
-            row_spacing: 6
+            row_spacing: 6,
         });
 
         this.connect('screen-changed', this._onScreenChanged.bind(this));
@@ -29,7 +29,7 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
 
         this._preview = new Gtk.DrawingArea({
             halign: Gtk.Align.CENTER,
-            margin_bottom: 18
+            margin_bottom: 18,
         });
         this._preview.connect('draw', this._drawPreview.bind(this));
         this.attach(this._preview, 0, 0, 2, 1);
@@ -70,7 +70,7 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
         this._addRow(5, 'Opacity', scale);
 
         let checkWidget = new Gtk.CheckButton({
-            label: 'Show for all backgrounds'
+            label: 'Show for all backgrounds',
         });
         this._settings.bind('logo-always-visible',
             checkWidget, 'active',
@@ -86,7 +86,7 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
 
         if (!this._sizeGroup) {
             this._sizeGroup = new Gtk.SizeGroup({
-                mode: Gtk.SizeGroupMode.VERTICAL
+                mode: Gtk.SizeGroupMode.VERTICAL,
             });
         }
         this._sizeGroup.add_widget(widget);
@@ -94,7 +94,7 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
         this.attach(new Gtk.Label({
             label,
             xalign: 1.0,
-            margin_start: margin
+            margin_start: margin,
         }), 0, row, 1, 1);
         this.attach(widget, 1, row, 1, 1);
     }
@@ -109,7 +109,7 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
             lower,
             upper,
             step_increment: step,
-            page_increment: 10 * step
+            page_increment: 10 * step,
         });
         this._settings.bind(key, adj, 'value', Gio.SettingsBindFlags.DEFAULT);
         return adj;

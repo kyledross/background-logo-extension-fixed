@@ -89,7 +89,7 @@ var BackgroundLogo = GObject.registerClass({
 
         super._init({
             layout_manager: new Clutter.BinLayout(),
-            opacity: 0
+            opacity: 0,
         });
         bgManager._container.add_actor(this);
 
@@ -100,7 +100,7 @@ var BackgroundLogo = GObject.registerClass({
 
         let constraint = new Layout.MonitorConstraint({
             index: this._monitorIndex,
-            work_area: true
+            work_area: true,
         });
         this.add_constraint(constraint);
 
