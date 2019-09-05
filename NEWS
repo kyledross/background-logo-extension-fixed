@@ -1,3 +1,9 @@
+3.34.0
+======
+* Adjust to 3.34 changes [Florian]
+* Dim logo in overview [Florian]
+* Misc. cleanups [Florian]
+
 3.32.0
 ======
 * Drop convenience module in favor of upstream helpers [Florian]
