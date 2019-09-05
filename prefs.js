@@ -137,7 +137,7 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
         let file = Gio.File.new_for_commandline_arg(uri);
 
         if (uri.endsWith('.xml')) {
-            let slideShow = new GnomeDesktop.BGSlideShow({ filename: file.get_path() });
+            let slideShow = new GnomeDesktop.BGSlideShow({ file });
             slideShow.load();
 
             let [progress_, duration_, isFixed_, filename1, filename2_] =
