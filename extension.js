@@ -46,8 +46,9 @@ class IconContainer extends St.Widget {
     }
 });
 
-class BackgroundLogo {
-    constructor(bgManager) {
+var BackgroundLogo = GObject.registerClass(
+class BackgroundLogo extends St.Widget {
+    _init(bgManager) {
         this._bgManager = bgManager;
         this._monitorIndex = bgManager._monitorIndex;
 
@@ -73,22 +74,22 @@ class BackgroundLogo {
             this._updateLogoTexture();
         });
 
-        this.actor = new St.Widget({
+        super._init({
             layout_manager: new Clutter.BinLayout(),
             opacity: 0
         });
-        bgManager._container.add_actor(this.actor);
+        bgManager._container.add_actor(this);
 
-        this.actor.connect('destroy', this._onDestroy.bind(this));
+        this.connect('destroy', this._onDestroy.bind(this));
 
         let constraint = new Layout.MonitorConstraint({
             index: this._monitorIndex,
             work_area: true
         });
-        this.actor.add_constraint(constraint);
+        this.add_constraint(constraint);
 
         this._bin = new IconContainer({ x_expand: true, y_expand: true });
-        this.actor.add_actor(this._bin);
+        this.add_actor(this._bin);
         this._bin.connect('notify::resource-scale',
             this._updateLogoTexture.bind(this));
 
@@ -185,7 +186,7 @@ class BackgroundLogo {
 
     _updateBorder() {
         let border = this._settings.get_uint('logo-border');
-        this.actor.style = 'padding: %dpx;'.format(border);
+        this.style = 'padding: %dpx;'.format(border);
     }
 
     _updateVisibility() {
@@ -201,7 +202,7 @@ class BackgroundLogo {
         else // background == NONE
             visible = false;
 
-        this.actor.ease({
+        this.ease({
             opacity: visible ? 255 : 0,
             duration: Background.FADE_ANIMATION_TIME,
             mode: Clutter.AnimationMode.EASE_OUT_QUAD,
@@ -216,7 +217,7 @@ class BackgroundLogo {
                 this._bgManager.backgroundActor.connect('destroy',
                     this._backgroundDestroyed.bind(this));
         else // bgManager destroyed
-            this.actor.destroy();
+            this.destroy();
     }
 
     _onDestroy() {
@@ -235,7 +236,7 @@ class BackgroundLogo {
 
         this._logoFile = null;
     }
-}
+});
 
 
 class Extension {
@@ -254,7 +255,7 @@ class Extension {
         this._destroyLogo();
         this._forEachBackgroundManager(bgManager => {
             let logo = new BackgroundLogo(bgManager);
-            logo.actor.connect('destroy', () => {
+            logo.connect('destroy', () => {
                 this._logos.delete(logo);
             });
             this._logos.add(logo);
@@ -262,7 +263,7 @@ class Extension {
     }
 
     _destroyLogo() {
-        this._logos.forEach(l => l.actor.destroy());
+        this._logos.forEach(l => l.destroy());
     }
 
     enable() {
