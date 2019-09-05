@@ -51,7 +51,7 @@ var BackgroundLogo = GObject.registerClass({
         // For compatibility with Meta.BackgroundActor
         'brightness': GObject.ParamSpec.double(
             'brightness', 'brightness', 'brightness',
-            GObject.ParamFlags.READWRITE,
+            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
             0, 1, 1),
         'vignette-sharpness': GObject.ParamSpec.double(
             'vignette-sharpness', 'vignette-sharpness', 'vignette-sharpness',
@@ -75,6 +75,8 @@ var BackgroundLogo = GObject.registerClass({
             this._updatePosition.bind(this));
         this._settings.connect('changed::logo-border',
             this._updateBorder.bind(this));
+        this._settings.connect('changed::logo-opacity',
+            this._updateOpacity.bind(this));
         this._settings.connect('changed::logo-always-visible',
             this._updateVisibility.bind(this));
 
@@ -93,6 +95,9 @@ var BackgroundLogo = GObject.registerClass({
 
         this.connect('destroy', this._onDestroy.bind(this));
 
+        this.connect('notify::brightness',
+            this._updateOpacity.bind(this));
+
         let constraint = new Layout.MonitorConstraint({
             index: this._monitorIndex,
             work_area: true
@@ -103,10 +108,6 @@ var BackgroundLogo = GObject.registerClass({
         this.add_actor(this._bin);
         this._bin.connect('notify::resource-scale',
             this._updateLogoTexture.bind(this));
-
-        this._settings.bind('logo-opacity',
-            this._bin, 'opacity',
-            Gio.SettingsBindFlags.DEFAULT);
 
         this._updateLogo();
         this._updatePosition();
@@ -129,6 +130,11 @@ var BackgroundLogo = GObject.registerClass({
         this._logoFile = file;
 
         this._updateLogoTexture();
+    }
+
+    _updateOpacity() {
+        this._bin.opacity =
+            this._settings.get_uint('logo-opacity') * this.brightness;
     }
 
     _getWorkArea() {
