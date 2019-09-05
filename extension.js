@@ -21,7 +21,6 @@ const Background = imports.ui.background;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Layout = imports.ui.layout;
 const Main = imports.ui.main;
-const Tweener = imports.ui.tweener;
 
 var IconContainer = GObject.registerClass(
 class IconContainer extends St.Widget {
@@ -202,10 +201,10 @@ class BackgroundLogo {
         else // background == NONE
             visible = false;
 
-        Tweener.addTween(this.actor, {
+        this.actor.ease({
             opacity: visible ? 255 : 0,
-            time: Background.FADE_ANIMATION_TIME,
-            transition: 'easeOutQuad'
+            duration: Background.FADE_ANIMATION_TIME,
+            mode: Clutter.AnimationMode.EASE_OUT_QUAD,
         });
     }
 
