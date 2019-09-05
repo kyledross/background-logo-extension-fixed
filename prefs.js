@@ -84,10 +84,11 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
         widget.margin_end = margin;
         widget.hexpand = true;
 
-        if (!this._sizeGroup)
+        if (!this._sizeGroup) {
             this._sizeGroup = new Gtk.SizeGroup({
                 mode: Gtk.SizeGroupMode.VERTICAL
             });
+        }
         this._sizeGroup.add_widget(widget);
 
         this.attach(new Gtk.Label({

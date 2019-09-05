@@ -229,12 +229,13 @@ var BackgroundLogo = GObject.registerClass({
     _backgroundDestroyed() {
         this._bgDestroyedId = 0;
 
-        if (this._bgManager._backgroundSource) // background swapped
+        if (this._bgManager._backgroundSource) { // background swapped
             this._bgDestroyedId =
                 this._bgManager.backgroundActor.connect('destroy',
                     this._backgroundDestroyed.bind(this));
-        else // bgManager destroyed
+        } else { // bgManager destroyed
             this.destroy();
+        }
     }
 
     _onDestroy() {
