@@ -21,8 +21,8 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
 
         this._settings = ExtensionUtils.getSettings();
         this._settings.connect('changed', (settings, key) => {
-            if (key == 'logo-file' ||
-                key == 'logo-size')
+            if (key === 'logo-file' ||
+                key === 'logo-size')
                 this._logo = null;
             this._preview.queue_draw();
         });
@@ -102,7 +102,7 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
     _createAdjustment(key, step) {
         let schemaKey = this._settings.settings_schema.get_key(key);
         let [type, variant] = schemaKey.get_range().deep_unpack();
-        if (type != 'range')
+        if (type !== 'range')
             throw new Error('Invalid key type "%s" for adjustment'.format(type));
         let [lower, upper] = variant.deep_unpack();
         let adj = new Gtk.Adjustment({

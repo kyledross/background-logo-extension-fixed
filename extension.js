@@ -168,7 +168,7 @@ var BackgroundLogo = GObject.registerClass({
     }
 
     _updateScale() {
-        if (this._icon == null || this._icon.width == 0)
+        if (!this._icon || this._icon.width === 0)
             return;
 
         let size = this._settings.get_double('logo-size');
