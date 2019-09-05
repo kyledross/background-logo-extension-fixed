@@ -191,6 +191,13 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
             return;
 
         let rect = screen.get_monitor_geometry(screen.get_primary_monitor());
+
+        // If we can't get the actual geometry (wayland), use sane fallbacks
+        if (rect.width === 0 || rect.height === 0) {
+            rect.width = PREVIEW_WIDTH;
+            rect.height = PREVIEW_WIDTH * 9 / 16;
+        }
+
         this._scale = PREVIEW_WIDTH / rect.width;
         this._preview.set_size_request(
             PREVIEW_WIDTH,
