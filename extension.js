@@ -207,7 +207,7 @@ var BackgroundLogo = GObject.registerClass({
     }
 
     _updateVisibility() {
-        let background = this._bgManager.backgroundActor.background._delegate;
+        let { background } = this._bgManager.backgroundActor;
         let defaultUri = background._settings.get_default_value('picture-uri');
         let file = Gio.File.new_for_commandline_arg(defaultUri.deep_unpack());
 
