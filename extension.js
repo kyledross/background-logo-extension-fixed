@@ -55,7 +55,7 @@ var BackgroundLogo = GObject.registerClass({
             0, 1, 1),
         'vignette-sharpness': GObject.ParamSpec.double(
             'vignette-sharpness', 'vignette-sharpness', 'vignette-sharpness',
-            GObject.ParamFlags.READWRITE,
+            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
             0, 1, 0),
     },
 }, class BackgroundLogo extends St.Widget {
