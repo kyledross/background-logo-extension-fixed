@@ -1,3 +1,11 @@
+3.36.0
+======
+* Fix warnings when opening overview [Florian]
+* Adjust to 3.36 changes [Florian]
+
+Contributors:
+  Florian Müllner
+
 3.34.0
 ======
 * Adjust to 3.34 changes [Florian]
