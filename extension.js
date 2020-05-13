@@ -112,6 +112,7 @@ var BackgroundLogo = GObject.registerClass({
         this._updateLogo();
         this._updatePosition();
         this._updateBorder();
+        this._updateOpacity();
 
         this._bgDestroyedId = bgManager.backgroundActor.connect('destroy',
             this._backgroundDestroyed.bind(this));
