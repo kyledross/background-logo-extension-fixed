@@ -106,7 +106,7 @@ var BackgroundLogo = GObject.registerClass({
 
         this._bin = new IconContainer({ x_expand: true, y_expand: true });
         this.add_actor(this._bin);
-        this._bin.connect('notify::resource-scale',
+        this._bin.connect('resource-scale-changed',
             this._updateLogoTexture.bind(this));
 
         this._updateLogo();
@@ -152,15 +152,12 @@ var BackgroundLogo = GObject.registerClass({
             this._icon.destroy();
         this._icon = null;
 
-        let [valid, resourceScale] = this._bin.get_resource_scale();
-        if (!valid)
-            return;
-
         let key = this._settings.settings_schema.get_key('logo-size');
         let [, range] = key.get_range().deep_unpack();
         let [, max] = range.deep_unpack();
         let width = this._getWidthForRelativeSize(max);
 
+        const resourceScale = this._bin.get_resource_scale();
         let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
         this._icon = this._textureCache.load_file_async(this._logoFile, width, -1, scaleFactor, resourceScale);
         this._icon.connect('notify::content',
