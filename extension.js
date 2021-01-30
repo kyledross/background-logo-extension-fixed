@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
-const { Clutter, Gio, GObject, St } = imports.gi;
+const { Clutter, Gio, GLib, GObject, Meta, St } = imports.gi;
 
 const Background = imports.ui.background;
 const ExtensionUtils = imports.misc.extensionUtils;
@@ -128,6 +128,14 @@ class BackgroundLogo extends St.Widget {
         return width * size / 100;
     }
 
+    _getActorScale() {
+        if (!this.has_allocation())
+            return 1;
+
+        let { width } = this._getWorkArea();
+        return this.allocation.get_width() / width;
+    }
+
     _updateLogoTexture() {
         if (this._icon)
             this._icon.destroy();
@@ -152,7 +160,7 @@ class BackgroundLogo extends St.Widget {
 
         let size = this._settings.get_double('logo-size');
         let width = this._getWidthForRelativeSize(size);
-        let scale = width / this._icon.width;
+        let scale = this._getActorScale() * width / this._icon.width;
         this._bin.set_scale(scale, scale);
     }
 
@@ -181,8 +189,14 @@ class BackgroundLogo extends St.Widget {
     }
 
     _updateBorder() {
-        let border = this._settings.get_uint('logo-border');
-        this.style = 'padding: %dpx;'.format(border);
+        const border =
+            this._getActorScale() * this._settings.get_uint('logo-border');
+        this._bin.set({
+            margin_top: border,
+            margin_bottom: border,
+            margin_left: border,
+            margin_right: border,
+        });
     }
 
     _updateVisibility() {
@@ -205,7 +219,26 @@ class BackgroundLogo extends St.Widget {
         });
     }
 
+    vfunc_allocate(box) {
+        super.vfunc_allocate(box);
+
+        if (this._laterId)
+            return;
+
+        this._laterId = Meta.later_add(Meta.LaterType.BEFORE_REDRAW, () => {
+            this._updateScale();
+            this._updateBorder();
+
+            this._laterId = 0;
+            return GLib.SOURCE_REMOVE;
+        });
+    }
+
     _onDestroy() {
+        if (this._laterId)
+            Meta.later_remove(this._laterId);
+        this._laterId = 0;
+
         this._backgroundActor.layout_manager = null;
         this._settings.run_dispose();
         this._settings = null;
