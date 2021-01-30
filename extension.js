@@ -19,7 +19,6 @@ const { Clutter, Gio, GObject, St } = imports.gi;
 
 const Background = imports.ui.background;
 const ExtensionUtils = imports.misc.extensionUtils;
-const Layout = imports.ui.layout;
 const Main = imports.ui.main;
 
 var IconContainer = GObject.registerClass(
@@ -78,20 +77,17 @@ class BackgroundLogo extends St.Widget {
 
         super._init({
             layout_manager: new Clutter.BinLayout(),
+            x_expand: true,
+            y_expand: true,
             opacity: 0,
         });
+        this._backgroundActor.layout_manager = new Clutter.BinLayout();
         this._backgroundActor.add_child(this);
 
         this.connect('destroy', this._onDestroy.bind(this));
 
         this._backgroundActor.content.connect('notify::brightness',
             this._updateOpacity.bind(this));
-
-        let constraint = new Layout.MonitorConstraint({
-            index: this._monitorIndex,
-            work_area: true,
-        });
-        this.add_constraint(constraint);
 
         this._bin = new IconContainer({ x_expand: true, y_expand: true });
         this.add_actor(this._bin);
@@ -210,6 +206,7 @@ class BackgroundLogo extends St.Widget {
     }
 
     _onDestroy() {
+        this._backgroundActor.layout_manager = null;
         this._settings.run_dispose();
         this._settings = null;
 
