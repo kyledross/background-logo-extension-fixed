@@ -20,7 +20,10 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
     _init() {
         super._init({
             halign: Gtk.Align.CENTER,
-            margin: 24,
+            margin_top: 24,
+            margin_bottom: 24,
+            margin_start: 24,
+            margin_end: 24,
             column_spacing: 12,
             row_spacing: 6,
         });
@@ -39,7 +42,7 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
             width_request: PREVIEW_WIDTH,
             height_request: PREVIEW_WIDTH * 9 / 16,
         });
-        this._preview.connect('draw', this._drawPreview.bind(this));
+        this._preview.set_draw_func(this._drawPreview.bind(this));
         this.attach(this._preview, 0, 0, 2, 1);
 
         const filter = new Gtk.FileFilter();
@@ -60,7 +63,7 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
             label: '(None)',
         });
         this._logoPicker.connect('clicked', () => {
-            this._fileChooser.transient_for = this.get_toplevel();
+            this._fileChooser.transient_for = this.get_root();
             this._fileChooser.show();
         });
         this._settings.connect('changed::logo-file',
@@ -136,10 +139,7 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
         return adj;
     }
 
-    _drawPreview(preview, cr) {
-        let width = preview.get_allocated_width();
-        let height = preview.get_allocated_height();
-
+    _drawPreview(preview, cr, width, height) {
         if (!this._background)
             this._createBackgroundThumbnail(width, height);
         Gdk.cairo_set_source_pixbuf(cr, this._background, 0, 0);
@@ -233,8 +233,5 @@ function init() {
 }
 
 function buildPrefsWidget() {
-    let widget = new BackgroundLogoPrefsWidget();
-    widget.show_all();
-
-    return widget;
+    return new BackgroundLogoPrefsWidget();
 }
