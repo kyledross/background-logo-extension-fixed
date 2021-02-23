@@ -25,8 +25,6 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
             row_spacing: 6,
         });
 
-        this.connect('screen-changed', this._onScreenChanged.bind(this));
-
         this._settings = ExtensionUtils.getSettings();
         this._settings.connect('changed', (settings, key) => {
             if (key === 'logo-file' ||
@@ -38,6 +36,8 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
         this._preview = new Gtk.DrawingArea({
             halign: Gtk.Align.CENTER,
             margin_bottom: 18,
+            width_request: PREVIEW_WIDTH,
+            height_request: PREVIEW_WIDTH * 9 / 16,
         });
         this._preview.connect('draw', this._drawPreview.bind(this));
         this.attach(this._preview, 0, 0, 2, 1);
@@ -181,7 +181,7 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
     }
 
     _getLogoPosition(width, height) {
-        let scaledBorder = this._settings.get_uint('logo-border') * this._scale;
+        let scaledBorder = this._settings.get_uint('logo-border');
         let x, y;
         switch (this._settings.get_string('logo-position')) {
         case 'center':
@@ -202,25 +202,6 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
             break;
         }
         return [x, y];
-    }
-
-    _onScreenChanged() {
-        let screen = this.get_screen();
-        if (!screen)
-            return;
-
-        let rect = screen.get_monitor_geometry(screen.get_primary_monitor());
-
-        // If we can't get the actual geometry (wayland), use sane fallbacks
-        if (rect.width === 0 || rect.height === 0) {
-            rect.width = PREVIEW_WIDTH;
-            rect.height = PREVIEW_WIDTH * 9 / 16;
-        }
-
-        this._scale = PREVIEW_WIDTH / rect.width;
-        this._preview.set_size_request(
-            PREVIEW_WIDTH,
-            PREVIEW_WIDTH * rect.height / rect.width);
     }
 });
 
