@@ -1,3 +1,8 @@
+40.beta
+=======
+* Adjust to 40 changes [Florian]
+* Port preferences to GTK4 [Florian]
+
 3.37.3
 ======
 * Adjust to 3.37.3 changes [Florian]
