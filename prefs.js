@@ -1,5 +1,5 @@
 /* exported init, buildPrefsWidget */
-const { Gdk, GdkPixbuf, Gio, GObject, Gtk } = imports.gi;
+const { Gdk, GdkPixbuf, Gio, GLib, GObject, Gtk } = imports.gi;
 const ByteArray = imports.byteArray;
 
 let GnomeDesktop = null;
@@ -42,18 +42,31 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
         this._preview.connect('draw', this._drawPreview.bind(this));
         this.attach(this._preview, 0, 0, 2, 1);
 
-        let filter = new Gtk.FileFilter();
+        const filter = new Gtk.FileFilter();
         filter.add_pixbuf_formats();
 
-        let fileChooser = new Gtk.FileChooserButton({
+        this._fileChooser = new Gtk.FileChooserNative({
             title: 'Select an Image',
             filter,
+            modal: true,
         });
-        fileChooser.set_filename(this._settings.get_string('logo-file'));
-        fileChooser.connect('file-set',  () => {
-            this._settings.set_string('logo-file', fileChooser.get_filename());
+        this._fileChooser.connect('response',  (dlg, response) => {
+            if (response !== Gtk.ResponseType.ACCEPT)
+                return;
+            this._settings.set_string('logo-file', dlg.get_file().get_path());
         });
-        this._addRow(1, 'Logo image', fileChooser);
+
+        this._logoPicker = new Gtk.Button({
+            label: '(None)',
+        });
+        this._logoPicker.connect('clicked', () => {
+            this._fileChooser.transient_for = this.get_toplevel();
+            this._fileChooser.show();
+        });
+        this._settings.connect('changed::logo-file',
+            this._updateLogoPicker.bind(this));
+        this._updateLogoPicker();
+        this._addRow(1, 'Logo image', this._logoPicker);
 
         let comboBox = new Gtk.ComboBoxText();
         comboBox.append('center', 'Center');
@@ -202,6 +215,17 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
             break;
         }
         return [x, y];
+    }
+
+    _updateLogoPicker() {
+        const filename = this._settings.get_string('logo-file');
+        this._logoPicker.label = GLib.basename(filename);
+    }
+
+    on_destroy() {
+        if (this._fileChooser)
+            this._fileChooser.destroy();
+        this._fileChooser = null;
     }
 });
 
