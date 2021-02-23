@@ -1,5 +1,13 @@
 /* exported init, buildPrefsWidget */
-const { Gdk, GdkPixbuf, Gio, GnomeDesktop, GObject, Gtk } = imports.gi;
+const { Gdk, GdkPixbuf, Gio, GObject, Gtk } = imports.gi;
+const ByteArray = imports.byteArray;
+
+let GnomeDesktop = null;
+try {
+    GnomeDesktop = imports.gi.GnomeDesktop;
+} catch (e) {
+    // not compatible with GTK4 yet
+}
 
 const ExtensionUtils = imports.misc.extensionUtils;
 
@@ -132,19 +140,29 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
         cr.paintWithAlpha(this._settings.get_uint('logo-opacity') / 255.0);
     }
 
+    _getSlideShowSlide(file, width, height) {
+        if (GnomeDesktop) {
+            const slideShow = new GnomeDesktop.BGSlideShow({ file });
+            slideShow.load();
+
+            const [progress_, duration_, isFixed_, filename1, filename2_] =
+                slideShow.get_current_slide(width, height);
+            return Gio.File.new_for_commandline_arg(filename1);
+        } else {
+            const [, contents] = file.load_contents(null);
+            const str = ByteArray.toString(contents);
+            const [, filename1] = str.match(/<file>(.*)<\/file>/);
+            return Gio.File.new_for_commandline_arg(filename1);
+        }
+    }
+
     _createBackgroundThumbnail(width, height) {
         let settings = new Gio.Settings({ schema_id: BACKGROUND_SCHEMA });
         let uri = settings.get_default_value('picture-uri').deep_unpack();
         let file = Gio.File.new_for_commandline_arg(uri);
 
-        if (uri.endsWith('.xml')) {
-            let slideShow = new GnomeDesktop.BGSlideShow({ file });
-            slideShow.load();
-
-            let [progress_, duration_, isFixed_, filename1, filename2_] =
-                slideShow.get_current_slide(width, height);
-            file = Gio.File.new_for_commandline_arg(filename1);
-        }
+        if (uri.endsWith('.xml'))
+            file = this._getSlideShowSlide(file, width, height);
         let pixbuf = GdkPixbuf.Pixbuf.new_from_file(file.get_path());
         this._background = pixbuf.scale_simple(
             width, height, GdkPixbuf.InterpType.BILINEAR);
