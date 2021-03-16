@@ -31,7 +31,7 @@
     </key>
     <key type="u" name="logo-border">
       <range min="0" max="100"/>
-      <default>16</default>
+      <default>50</default>
       <summary>Logo border</summary>
       <description>The border around the logo</description>
     </key>
