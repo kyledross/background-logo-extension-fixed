@@ -25,13 +25,6 @@ var IconContainer = GObject.registerClass(
 class IconContainer extends St.Widget {
     _init(params) {
         super._init(params);
-
-        this.connect('notify::scale-x', () => {
-            this.queue_relayout();
-        });
-        this.connect('notify::scale-y', () => {
-            this.queue_relayout();
-        });
     }
 
     vfunc_get_preferred_width(forHeight) {
