@@ -1,5 +1,5 @@
 project('background-logo-extension',
-  version: '41',
+  version: '41.0',
   meson_version: '>= 0.40.0'
 )
 
