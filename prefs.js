@@ -101,24 +101,21 @@ class PreviewGroup extends Adw.PreferencesGroup {
     _getLogoPosition(width, height) {
         let scaledBorder = this._settings.get_uint('logo-border');
         let x, y;
-        switch (this._settings.get_string('logo-position')) {
-        case 'center':
-            x = (width - this._logo.get_width()) / 2;
-            y = (height - this._logo.get_height()) / 2;
-            break;
-        case 'bottom-left':
+        const position = this._settings.get_string('logo-position');
+        if (position.endsWith('left'))
             x = scaledBorder;
-            y = height - this._logo.get_height() - scaledBorder;
-            break;
-        case 'bottom-center':
+        else if (position.endsWith('right'))
+            x = (width - this._logo.get_width() - scaledBorder);
+        else
             x = (width - this._logo.get_width()) / 2;
+
+        if (position.startsWith('top'))
+            y = scaledBorder;
+        else if (position.startsWith('bottom'))
             y = height - this._logo.get_height() - scaledBorder;
-            break;
-        case 'bottom-right':
-            x = width - this._logo.get_width() - scaledBorder;
-            y = height - this._logo.get_height() - scaledBorder;
-            break;
-        }
+        else
+            y = (height - this._logo.get_height()) / 2;
+
         return [x, y];
     }
 });
@@ -182,6 +179,9 @@ class LogoGroup extends Adw.PreferencesGroup {
         positionModel.append(new LogoPosition('Bottom left', 'bottom-left'));
         positionModel.append(new LogoPosition('Bottom center', 'bottom-center'));
         positionModel.append(new LogoPosition('Bottom right', 'bottom-right'));
+        positionModel.append(new LogoPosition('Top left', 'top-left'));
+        positionModel.append(new LogoPosition('Top center', 'top-center'));
+        positionModel.append(new LogoPosition('Top right', 'top-right'));
         this._positionRow = new Adw.ComboRow({
             title: 'Position',
             model: positionModel,

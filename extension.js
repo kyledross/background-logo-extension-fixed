@@ -166,26 +166,22 @@ class BackgroundLogo extends St.Widget {
 
     _updatePosition() {
         let xAlign, yAlign;
-        switch (this._settings.get_string('logo-position')) {
-        case 'center':
-            xAlign = Clutter.ActorAlign.CENTER;
-            yAlign = Clutter.ActorAlign.CENTER;
-            break;
-        case 'bottom-left':
+        const position = this._settings.get_string('logo-position');
+        if (position.endsWith('left'))
             xAlign = Clutter.ActorAlign.START;
-            yAlign = Clutter.ActorAlign.END;
-            break;
-        case 'bottom-center':
-            xAlign = Clutter.ActorAlign.CENTER;
-            yAlign = Clutter.ActorAlign.END;
-            break;
-        case 'bottom-right':
+        else if (position.endsWith('right'))
             xAlign = Clutter.ActorAlign.END;
+        else
+            xAlign = Clutter.ActorAlign.CENTER;
+
+        if (position.startsWith('top'))
+            yAlign = Clutter.ActorAlign.START;
+        else if (position.startsWith('bottom'))
             yAlign = Clutter.ActorAlign.END;
-            break;
-        }
-        this._bin.x_align = xAlign;
-        this._bin.y_align = yAlign;
+        else
+            yAlign = Clutter.ActorAlign.CENTER;
+
+        this._bin.set({ xAlign, yAlign });
     }
 
     _updateBorder() {
