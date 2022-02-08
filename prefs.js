@@ -2,6 +2,8 @@
 const { Adw, Gdk, GdkPixbuf, Gio, GLib, GObject, Gtk } = imports.gi;
 const ByteArray = imports.byteArray;
 
+imports.gi.versions.GnomeDesktop = '4.0';
+
 let GnomeDesktop = null;
 try {
     GnomeDesktop = imports.gi.GnomeDesktop;
