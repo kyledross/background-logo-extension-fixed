@@ -229,9 +229,11 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
     }
 });
 
+/** */
 function init() {
 }
 
+/** */
 function buildPrefsWidget() {
     return new BackgroundLogoPrefsWidget();
 }

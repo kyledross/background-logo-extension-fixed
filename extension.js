@@ -275,6 +275,7 @@ class Extension {
     }
 }
 
+/** */
 function init() {
     return new Extension();
 }
