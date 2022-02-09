@@ -1,5 +1,5 @@
 /* exported init, buildPrefsWidget */
-const { Gdk, GdkPixbuf, Gio, GLib, GObject, Gtk } = imports.gi;
+const { Adw, Gdk, GdkPixbuf, Gio, GLib, GObject, Gtk } = imports.gi;
 const ByteArray = imports.byteArray;
 
 let GnomeDesktop = null;
@@ -15,21 +15,13 @@ const BACKGROUND_SCHEMA = 'org.gnome.desktop.background';
 
 const PREVIEW_WIDTH = 400;
 
-let BackgroundLogoPrefsWidget = GObject.registerClass(
-class BackgroundLogoPrefsWidget extends Gtk.Grid {
-    _init() {
-        super._init({
-            halign: Gtk.Align.CENTER,
-            margin_top: 24,
-            margin_bottom: 24,
-            margin_start: 24,
-            margin_end: 24,
-            column_spacing: 12,
-            row_spacing: 6,
-        });
+const PreviewGroup = GObject.registerClass(
+class PreviewGroup extends Adw.PreferencesGroup {
+    _init(settings) {
+        super._init();
 
-        this._settings = ExtensionUtils.getSettings();
-        this._settings.connect('changed', (settings, key) => {
+        this._settings = settings;
+        this._settings.connect('changed', (s, key) => {
             if (key === 'logo-file' ||
                 key === 'logo-size')
                 this._logo = null;
@@ -38,105 +30,16 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
 
         this._preview = new Gtk.DrawingArea({
             halign: Gtk.Align.CENTER,
-            margin_bottom: 18,
+            margin_bottom: 12,
+            margin_top: 12,
             width_request: PREVIEW_WIDTH,
             height_request: PREVIEW_WIDTH * 9 / 16,
         });
+
         this._preview.set_draw_func(this._drawPreview.bind(this));
-        this.attach(this._preview, 0, 0, 2, 1);
-
-        const filter = new Gtk.FileFilter();
-        filter.add_pixbuf_formats();
-
-        this._fileChooser = new Gtk.FileChooserNative({
-            title: 'Select an Image',
-            filter,
-            modal: true,
-        });
-        this._fileChooser.connect('response',  (dlg, response) => {
-            if (response !== Gtk.ResponseType.ACCEPT)
-                return;
-            this._settings.set_string('logo-file', dlg.get_file().get_path());
-        });
-
-        this._logoPicker = new Gtk.Button({
-            label: '(None)',
-        });
-        this._logoPicker.connect('clicked', () => {
-            this._fileChooser.transient_for = this.get_root();
-            this._fileChooser.show();
-        });
-        this._settings.connect('changed::logo-file',
-            this._updateLogoPicker.bind(this));
-        this._updateLogoPicker();
-        this._addRow(1, 'Logo image', this._logoPicker);
-
-        let comboBox = new Gtk.ComboBoxText();
-        comboBox.append('center', 'Center');
-        comboBox.append('bottom-left', 'Bottom left');
-        comboBox.append('bottom-center', 'Bottom center');
-        comboBox.append('bottom-right', 'Bottom right');
-        this._settings.bind('logo-position',
-            comboBox, 'active-id',
-            Gio.SettingsBindFlags.DEFAULT);
-        this._addRow(2, 'Position', comboBox);
-
-        let adjustment = this._createAdjustment('logo-size', 0.25);
-        let scale = new Gtk.Scale({ adjustment, draw_value: false });
-        this._addRow(3, 'Size', scale);
-
-        adjustment = this._createAdjustment('logo-border', 1.0);
-        scale = new Gtk.Scale({ adjustment, draw_value: false });
-        this._addRow(4, 'Border', scale);
-
-        adjustment = this._createAdjustment('logo-opacity', 1.0);
-        scale = new Gtk.Scale({ adjustment, draw_value: false });
-        this._addRow(5, 'Opacity', scale);
-
-        let checkWidget = new Gtk.CheckButton({
-            label: 'Show for all backgrounds',
-        });
-        this._settings.bind('logo-always-visible',
-            checkWidget, 'active',
-            Gio.SettingsBindFlags.DEFAULT);
-        this.attach(checkWidget, 1, 6, 1, 1);
-    }
-
-    _addRow(row, label, widget) {
-        let margin = 48;
-
-        widget.margin_end = margin;
-        widget.hexpand = true;
-
-        if (!this._sizeGroup) {
-            this._sizeGroup = new Gtk.SizeGroup({
-                mode: Gtk.SizeGroupMode.VERTICAL,
-            });
-        }
-        this._sizeGroup.add_widget(widget);
-
-        this.attach(new Gtk.Label({
-            label,
-            xalign: 1.0,
-            margin_start: margin,
-        }), 0, row, 1, 1);
-        this.attach(widget, 1, row, 1, 1);
-    }
-
-    _createAdjustment(key, step) {
-        let schemaKey = this._settings.settings_schema.get_key(key);
-        let [type, variant] = schemaKey.get_range().deep_unpack();
-        if (type !== 'range')
-            throw new Error('Invalid key type "%s" for adjustment'.format(type));
-        let [lower, upper] = variant.deep_unpack();
-        let adj = new Gtk.Adjustment({
-            lower,
-            upper,
-            step_increment: step,
-            page_increment: 10 * step,
-        });
-        this._settings.bind(key, adj, 'value', Gio.SettingsBindFlags.DEFAULT);
-        return adj;
+        const previewRow = new Adw.PreferencesRow({ activatable: false });
+        previewRow.set_child(this._preview);
+        this.add(previewRow);
     }
 
     _drawPreview(preview, cr, width, height) {
@@ -216,16 +119,174 @@ class BackgroundLogoPrefsWidget extends Gtk.Grid {
         }
         return [x, y];
     }
+});
 
-    _updateLogoPicker() {
+const LogoPosition = GObject.registerClass({
+    Properties: {
+        'name': GObject.ParamSpec.string(
+            'name', 'name', 'name',
+            GObject.ParamFlags.READWRITE,
+            null),
+        'value': GObject.ParamSpec.string(
+            'value', 'value', 'value',
+            GObject.ParamFlags.READWRITE,
+            null),
+    },
+}, class LogoPosition extends GObject.Object {
+    _init(name, value) {
+        super._init({ name, value });
+    }
+});
+
+const LogoGroup = GObject.registerClass(
+class LogoGroup extends Adw.PreferencesGroup {
+    _init(settings) {
+        super._init({ title: 'Logo' });
+
+        this._settings = settings;
+
+        const filter = new Gtk.FileFilter();
+        filter.add_pixbuf_formats();
+
+        this._fileChooser = new Gtk.FileChooserNative({
+            title: 'Select an Image',
+            filter,
+            modal: true,
+        });
+        this._fileChooser.connect('response',  (dlg, response) => {
+            if (response !== Gtk.ResponseType.ACCEPT)
+                return;
+            this._settings.set_string('logo-file', dlg.get_file().get_path());
+        });
+
+        this._filenameLabel = new Gtk.Label();
+        this._settings.connect('changed::logo-file',
+            () => this._updateFilenameLabel());
+        this._updateFilenameLabel();
+
+        const filenameRow = new Adw.ActionRow({
+            title: 'Filename',
+            activatable: true,
+        });
+        filenameRow.connect('activated', () => {
+            this._fileChooser.transient_for = this.get_root();
+            this._fileChooser.show();
+        });
+        filenameRow.add_suffix(this._filenameLabel);
+        this.add(filenameRow);
+
+        const positionModel = new Gio.ListStore({ item_type: LogoPosition });
+        positionModel.append(new LogoPosition('Center', 'center'));
+        positionModel.append(new LogoPosition('Bottom left', 'bottom-left'));
+        positionModel.append(new LogoPosition('Bottom center', 'bottom-center'));
+        positionModel.append(new LogoPosition('Bottom right', 'bottom-right'));
+        this._positionRow = new Adw.ComboRow({
+            title: 'Position',
+            model: positionModel,
+            expression: new Gtk.PropertyExpression(LogoPosition, null, 'name'),
+        });
+        this.add(this._positionRow);
+
+        this._positionRow.connect('notify::selected-item', () => {
+            const { selectedItem } = this._positionRow;
+            this._settings.set_string('logo-position', selectedItem.value);
+        });
+        this._settings.connect('changed::logo-position',
+            () => this._updateSelectedPosition());
+        this._updateSelectedPosition();
+
+        this._addScaleRow('Size', 'logo-size', 0.25);
+        this._addScaleRow('Border', 'logo-border', 1.0);
+        this._addScaleRow('Opacity', 'logo-opacity', 1.0);
+    }
+
+    _addScaleRow(title, key, stepSize) {
+        const adjustment = this._createAdjustment(key, stepSize);
+        const activatableWidget = new Gtk.Scale({
+            adjustment,
+            draw_value: false,
+            hexpand: true,
+        });
+        const row = new Adw.ActionRow({
+            activatableWidget,
+            title,
+        });
+        row.add_suffix(activatableWidget);
+        this.add(row);
+    }
+
+    _updateSelectedPosition() {
+        const position = this._settings.get_string('logo-position');
+        const { model } = this._positionRow;
+        for (let i = 0; i < model.get_n_items(); i++) {
+            const item = model.get_item(i);
+            if (item.value === position) {
+                this._positionRow.set_selected(i);
+                break;
+            }
+        }
+    }
+
+    _createAdjustment(key, step) {
+        let schemaKey = this._settings.settings_schema.get_key(key);
+        let [type, variant] = schemaKey.get_range().deep_unpack();
+        if (type !== 'range')
+            throw new Error('Invalid key type "%s" for adjustment'.format(type));
+        let [lower, upper] = variant.deep_unpack();
+        let adj = new Gtk.Adjustment({
+            lower,
+            upper,
+            step_increment: step,
+            page_increment: 10 * step,
+        });
+        this._settings.bind(key, adj, 'value', Gio.SettingsBindFlags.DEFAULT);
+        return adj;
+    }
+
+    _updateFilenameLabel() {
         const filename = this._settings.get_string('logo-file');
-        this._logoPicker.label = GLib.basename(filename);
+        this._filenameLabel.label = GLib.basename(filename);
     }
 
     on_destroy() {
         if (this._fileChooser)
             this._fileChooser.destroy();
         this._fileChooser = null;
+    }
+});
+
+const OptionsGroup = GObject.registerClass(
+class OptionsGroup extends Adw.PreferencesGroup {
+    _init(settings) {
+        super._init({ title: 'Options' });
+
+        this._settings = settings;
+        const alwaysShowSwitch = new Gtk.Switch({
+            valign: Gtk.Align.CENTER,
+        });
+        this._settings.bind('logo-always-visible',
+            alwaysShowSwitch, 'active',
+            Gio.SettingsBindFlags.DEFAULT);
+
+        const row = new Adw.ActionRow({
+            title: 'Show for all backgrounds',
+            activatable_widget: alwaysShowSwitch,
+        });
+        row.add_suffix(alwaysShowSwitch);
+        this.add(row);
+    }
+});
+
+const BackgroundLogoPrefsWidget = GObject.registerClass(
+class BackgroundLogoPrefsWidget extends Adw.PreferencesPage {
+    _init() {
+        super._init();
+
+        const settings = ExtensionUtils.getSettings();
+
+        this.add(new PreviewGroup(settings));
+        this.add(new LogoGroup(settings));
+        this.add(new OptionsGroup(settings));
     }
 });
 
