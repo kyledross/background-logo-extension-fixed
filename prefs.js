@@ -15,6 +15,7 @@ const ExtensionUtils = imports.misc.extensionUtils;
 
 const BACKGROUND_SCHEMA = 'org.gnome.desktop.background';
 
+const MONITOR_WIDTH = 1920;
 const PREVIEW_WIDTH = 400;
 
 const PreviewGroup = GObject.registerClass(
@@ -99,7 +100,9 @@ class PreviewGroup extends Adw.PreferencesGroup {
     }
 
     _getLogoPosition(width, height) {
-        let scaledBorder = this._settings.get_uint('logo-border');
+        const previewScale = PREVIEW_WIDTH / MONITOR_WIDTH;
+        const scaledBorder =
+            previewScale * this._settings.get_uint('logo-border');
         let x, y;
         const position = this._settings.get_string('logo-position');
         if (position.endsWith('left'))
