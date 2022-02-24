@@ -128,12 +128,12 @@ class BackgroundLogo extends St.Widget {
             this._settings.get_uint('logo-opacity') * brightness;
     }
 
-    _getWorkArea() {
-        return Main.layoutManager.getWorkAreaForMonitor(this._monitorIndex);
+    _getMonitorArea() {
+        return Main.layoutManager.monitors[this._monitorIndex];
     }
 
     _getWidthForRelativeSize(size) {
-        let { width } = this._getWorkArea();
+        let { width } = this._getMonitorArea();
         return width * size / 100;
     }
 
@@ -141,7 +141,7 @@ class BackgroundLogo extends St.Widget {
         if (!this.has_allocation())
             return 1;
 
-        let { width } = this._getWorkArea();
+        let { width } = this._getMonitorArea();
         return this.allocation.get_width() / width;
     }
 
