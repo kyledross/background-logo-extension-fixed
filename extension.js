@@ -54,6 +54,9 @@ class BackgroundLogo extends St.Widget {
         this._logoFile = null;
 
         this._settings = ExtensionUtils.getSettings();
+        this._ifaceSettings = new Gio.Settings({
+            schema_id: 'org.gnome.desktop.interface',
+        });
 
         this._settings.connect('changed::logo-file',
             this._updateLogo.bind(this));
@@ -197,7 +200,11 @@ class BackgroundLogo extends St.Widget {
 
     _updateVisibility() {
         const { background } = this._backgroundActor.content;
-        let defaultUri = background._settings.get_default_value('picture-uri');
+        const colorScheme = this._ifaceSettings.get_string('color-scheme');
+        const uriKey = colorScheme === 'prefer-dark'
+            ? 'picture-uri-dark'
+            : 'picture-uri';
+        const defaultUri = background._settings.get_default_value(uriKey);
         let file = Gio.File.new_for_commandline_arg(defaultUri.deep_unpack());
 
         let visible;
