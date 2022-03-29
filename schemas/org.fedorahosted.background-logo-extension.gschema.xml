@@ -17,6 +17,11 @@
       <summary>Logo file</summary>
       <description>The full logo file path</description>
     </key>
+    <key type="s" name="logo-file-dark">
+      <default>'/usr/share/fedora-logos/fedora_darkbackground.svg'</default>
+      <summary>Logo file in dark mode</summary>
+      <description>The full logo file path for dark mode</description>
+    </key>
     <key name="logo-position"
          enum="org.fedorahosted.background-logo-extension.Position">
       <default>'bottom-right'</default>

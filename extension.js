@@ -60,6 +60,8 @@ class BackgroundLogo extends St.Widget {
 
         this._settings.connect('changed::logo-file',
             this._updateLogo.bind(this));
+        this._settings.connect('changed::logo-file-dark',
+            this._updateLogo.bind(this));
         this._settings.connect('changed::logo-size',
             this._updateScale.bind(this));
         this._settings.connect('changed::logo-position',
@@ -105,7 +107,11 @@ class BackgroundLogo extends St.Widget {
     }
 
     _updateLogo() {
-        let filename = this._settings.get_string('logo-file');
+        const colorScheme = this._ifaceSettings.get_string('color-scheme');
+        const fileKey = colorScheme === 'prefer-dark'
+            ? 'logo-file-dark'
+            : 'logo-file';
+        const filename = this._settings.get_string(fileKey);
         let file = Gio.File.new_for_commandline_arg(filename);
         if (this._logoFile && this._logoFile.equal(file))
             return;
