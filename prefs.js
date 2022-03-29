@@ -146,6 +146,7 @@ class LogoGroup extends Adw.PreferencesGroup {
         super._init({ title: 'Logo' });
 
         this._settings = settings;
+        this._fileChooserKey = '';
 
         const filter = new Gtk.FileFilter();
         filter.add_pixbuf_formats();
@@ -158,24 +159,41 @@ class LogoGroup extends Adw.PreferencesGroup {
         this._fileChooser.connect('response',  (dlg, response) => {
             if (response !== Gtk.ResponseType.ACCEPT)
                 return;
-            this._settings.set_string('logo-file', dlg.get_file().get_path());
+            this._settings.set_string(this._fileChooserKey,
+                dlg.get_file().get_path());
         });
 
         this._filenameLabel = new Gtk.Label();
+        this._filenameDarkLabel = new Gtk.Label();
         this._settings.connect('changed::logo-file',
-            () => this._updateFilenameLabel());
-        this._updateFilenameLabel();
+            () => this._updateFilenameLabels());
+        this._settings.connect('changed::logo-file-dark',
+            () => this._updateFilenameLabels());
+        this._updateFilenameLabels();
 
         const filenameRow = new Adw.ActionRow({
             title: 'Filename',
             activatable: true,
         });
         filenameRow.connect('activated', () => {
+            this._fileChooserKey = 'logo-file';
             this._fileChooser.transient_for = this.get_root();
             this._fileChooser.show();
         });
         filenameRow.add_suffix(this._filenameLabel);
         this.add(filenameRow);
+
+        const filenameDarkRow = new Adw.ActionRow({
+            title: 'Filename (dark)',
+            activatable: true,
+        });
+        filenameDarkRow.connect('activated', () => {
+            this._fileChooserKey = 'logo-file-dark';
+            this._fileChooser.transient_for = this.get_root();
+            this._fileChooser.show();
+        });
+        filenameDarkRow.add_suffix(this._filenameDarkLabel);
+        this.add(filenameDarkRow);
 
         const positionModel = new Gio.ListStore({ item_type: LogoPosition });
         positionModel.append(new LogoPosition('Center', 'center'));
@@ -248,9 +266,12 @@ class LogoGroup extends Adw.PreferencesGroup {
         return adj;
     }
 
-    _updateFilenameLabel() {
+    _updateFilenameLabels() {
         const filename = this._settings.get_string('logo-file');
         this._filenameLabel.label = GLib.basename(filename);
+
+        const filenameDark = this._settings.get_string('logo-file-dark');
+        this._filenameDarkLabel.label = GLib.basename(filenameDark);
     }
 
     on_destroy() {
