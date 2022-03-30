@@ -25,9 +25,16 @@ class PreviewGroup extends Adw.PreferencesGroup {
 
         this._settings = settings;
         this._settings.connect('changed', (s, key) => {
-            if (key === 'logo-file' ||
+            if (key === this._logoKey ||
                 key === 'logo-size')
                 this._logo = null;
+            this._preview.queue_draw();
+        });
+
+        this._styleManager = Adw.StyleManager.get_default();
+        this._styleManager.connect('notify::dark', () => {
+            this._background = null;
+            this._logo = null;
             this._preview.queue_draw();
         });
 
@@ -77,7 +84,10 @@ class PreviewGroup extends Adw.PreferencesGroup {
 
     _createBackgroundThumbnail(width, height) {
         let settings = new Gio.Settings({ schema_id: BACKGROUND_SCHEMA });
-        let uri = settings.get_default_value('picture-uri').deep_unpack();
+        const bgKey = this._styleManager.dark
+            ? 'picture-uri-dark'
+            : 'picture-uri';
+        let uri = settings.get_default_value(bgKey).deep_unpack();
         let file = Gio.File.new_for_commandline_arg(uri);
 
         if (uri.endsWith('.xml'))
@@ -88,7 +98,10 @@ class PreviewGroup extends Adw.PreferencesGroup {
     }
 
     _createLogoThumbnail(width) {
-        let filename = this._settings.get_string('logo-file');
+        this._logoKey = this._styleManager.dark
+            ? 'logo-file-dark'
+            : 'logo-file';
+        let filename = this._settings.get_string(this._logoKey);
         let file = Gio.File.new_for_commandline_arg(filename);
         let pixbuf = GdkPixbuf.Pixbuf.new_from_file(file.get_path());
         let size = this._settings.get_double('logo-size') / 100;
