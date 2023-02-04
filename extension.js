@@ -229,7 +229,8 @@ class BackgroundLogo extends St.Widget {
         if (this._laterId)
             return;
 
-        this._laterId = Meta.later_add(Meta.LaterType.BEFORE_REDRAW, () => {
+        const laters = global.compositor.get_laters();
+        this._laterId = laters.add(Meta.LaterType.BEFORE_REDRAW, () => {
             this._updateScale();
             this._updateBorder();
 
@@ -240,7 +241,7 @@ class BackgroundLogo extends St.Widget {
 
     _onDestroy() {
         if (this._laterId)
-            Meta.later_remove(this._laterId);
+            global.compositor.get_laters().remove(this._laterId);
         this._laterId = 0;
 
         this._backgroundActor.layout_manager = null;
