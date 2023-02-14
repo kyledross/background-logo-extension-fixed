@@ -1,3 +1,12 @@
+44.beta
+=======
+* Position logo relative to monitor [Florian]
+* Fix glitchy overview transition [Carlos, Florian]
+* Adjust to gnome-shell changes [Florian]
+
+Contributors:
+  Carlos Garnacho, Florian Müllner
+
 42.0
 ====
 * Support positioning at the top
