@@ -55,8 +55,10 @@ class BackgroundLogo extends St.Widget {
             this._updateLogo.bind(this));
         this._settings.connect('changed::logo-file-dark',
             this._updateLogo.bind(this));
-        this._settings.connect('changed::logo-size',
-            this._updateScale.bind(this));
+        this._settings.connect('changed::logo-size', () => {
+            this._updateScale();
+            this.queue_relayout();
+        });
         this._settings.connect('changed::logo-position',
             this._updatePosition.bind(this));
         this._settings.connect('changed::logo-border',
