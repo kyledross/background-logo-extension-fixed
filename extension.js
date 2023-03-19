@@ -23,10 +23,6 @@ const Main = imports.ui.main;
 
 var IconContainer = GObject.registerClass(
 class IconContainer extends St.Widget {
-    _init(params) {
-        super._init(params);
-    }
-
     vfunc_get_preferred_width(forHeight) {
         let width = super.vfunc_get_preferred_width(forHeight);
         return width.map(w => w * this.scale_x);
