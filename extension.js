@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
-const { Clutter, Gio, GLib, GObject, Meta, St } = imports.gi;
+const {Clutter, Gio, GLib, GObject, Meta, St} = imports.gi;
 
 const Background = imports.ui.background;
 const ExtensionUtils = imports.misc.extensionUtils;
@@ -85,7 +85,7 @@ class BackgroundLogo extends St.Widget {
         this._backgroundActor.content.connect('notify::brightness',
             this._updateOpacity.bind(this));
 
-        this._bin = new IconContainer({ x_expand: true, y_expand: true });
+        this._bin = new IconContainer({x_expand: true, y_expand: true});
         this.add_actor(this._bin);
         this._bin.connect('resource-scale-changed',
             this._updateLogoTexture.bind(this));
@@ -124,7 +124,7 @@ class BackgroundLogo extends St.Widget {
     }
 
     _getWidthForRelativeSize(size) {
-        let { width } = this._getMonitorArea();
+        let {width} = this._getMonitorArea();
         return width * size / 100;
     }
 
@@ -132,7 +132,7 @@ class BackgroundLogo extends St.Widget {
         if (!this.has_allocation())
             return 1;
 
-        let { width } = this._getMonitorArea();
+        let {width} = this._getMonitorArea();
         return this.allocation.get_width() / width;
     }
 
@@ -181,7 +181,7 @@ class BackgroundLogo extends St.Widget {
         else
             yAlign = Clutter.ActorAlign.CENTER;
 
-        this._bin.set({ xAlign, yAlign });
+        this._bin.set({xAlign, yAlign});
     }
 
     _updateBorder() {
@@ -196,7 +196,7 @@ class BackgroundLogo extends St.Widget {
     }
 
     _updateVisibility() {
-        const { background } = this._backgroundActor.content;
+        const {background} = this._backgroundActor.content;
         const colorScheme = this._ifaceSettings.get_string('color-scheme');
         const uriKey = colorScheme === 'prefer-dark'
             ? 'picture-uri-dark'
@@ -260,7 +260,7 @@ class Extension {
     }
 
     enable() {
-        const { _createBackgroundOrig } = this;
+        const {_createBackgroundOrig} = this;
         this._bgManagerProto._createBackgroundActor = function () {
             const backgroundActor = _createBackgroundOrig.call(this);
             const logo_ = new BackgroundLogo(backgroundActor);
