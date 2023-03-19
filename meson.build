@@ -1,7 +1,9 @@
 project('background-logo-extension',
   version: '44.0',
-  meson_version: '>= 0.40.0'
+  meson_version: '>= 0.58.0'
 )
+
+gnome = import('gnome')
 
 sources = [
   'extension.js',
@@ -51,9 +53,9 @@ foreach s : schemas
   )
 endforeach
 
-if have_schemas
-  meson.add_install_script('meson-postinstall.sh')
-endif
+gnome.post_install(
+  glib_compile_schemas: true,
+)
 
 extension_tool = find_program('gnome-extensions', required: false)
 if extension_tool.found()
