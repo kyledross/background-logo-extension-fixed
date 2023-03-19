@@ -121,7 +121,7 @@ class PreviewGroup extends Adw.PreferencesGroup {
         if (position.endsWith('left'))
             x = scaledBorder;
         else if (position.endsWith('right'))
-            x = (width - this._logo.get_width() - scaledBorder);
+            x = width - this._logo.get_width() - scaledBorder;
         else
             x = (width - this._logo.get_width()) / 2;
 
