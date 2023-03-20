@@ -16,11 +16,7 @@ schemas = ['org.fedorahosted.background-logo-extension']
 uuid = 'background-logo@fedorahosted.org'
 
 ver_arr = meson.project_version().split('.')
-if ver_arr[1].version_compare('>=0')
-  shell_version = ver_arr[0]
-else # pre-release (alpha, beta, rc)
-  shell_version = '.'.join(ver_arr)
-endif
+shell_version = ver_arr[0]
 
 datadir = get_option('datadir')
 extensiondir = join_paths(datadir, 'gnome-shell', 'extensions')
