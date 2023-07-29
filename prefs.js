@@ -1,8 +1,14 @@
-/* exported init, buildPrefsWidget */
-const {Adw, Gdk, GdkPixbuf, Gio, GLib, GnomeDesktop, GObject, Gtk} = imports.gi;
+import Adw from 'gi://Adw';
+import Gdk from 'gi://Gdk';
+import GdkPixbuf from 'gi://GdkPixbuf';
+import Gio from 'gi://Gio';
+import GLib from 'gi://GLib';
+import GObject from 'gi://GObject';
+import GnomeDesktop from 'gi://GnomeDesktop?version=4.0';
+import Gtk from 'gi://Gtk';
 const ByteArray = imports.byteArray;
 
-const ExtensionUtils = imports.misc.extensionUtils;
+import {ExtensionPreferences} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
 const BACKGROUND_SCHEMA = 'org.gnome.desktop.background';
 
@@ -309,10 +315,8 @@ class OptionsGroup extends Adw.PreferencesGroup {
 
 const BackgroundLogoPrefsWidget = GObject.registerClass(
 class BackgroundLogoPrefsWidget extends Adw.PreferencesPage {
-    _init() {
+    _init(settings) {
         super._init();
-
-        const settings = ExtensionUtils.getSettings();
 
         this.add(new PreviewGroup(settings));
         this.add(new LogoGroup(settings));
@@ -320,11 +324,8 @@ class BackgroundLogoPrefsWidget extends Adw.PreferencesPage {
     }
 });
 
-/** */
-function init() {
-}
-
-/** */
-function buildPrefsWidget() {
-    return new BackgroundLogoPrefsWidget();
+export default class BackgroundLogoPreferences extends ExtensionPreferences {
+    getPreferencesWidget() {
+        return new BackgroundLogoPrefsWidget(this.getSettings());
+    }
 }
