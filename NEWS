@@ -1,3 +1,11 @@
+45.beta
+=======
+ * Port to ESM [Florian]
+ * Misc. cleanups [Florian]
+
+Contributors:
+  Florian Müllner
+
 44.0
 ====
 * Bump version
