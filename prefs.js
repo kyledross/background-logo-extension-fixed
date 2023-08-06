@@ -1,15 +1,6 @@
 /* exported init, buildPrefsWidget */
-const {Adw, Gdk, GdkPixbuf, Gio, GLib, GObject, Gtk} = imports.gi;
+const {Adw, Gdk, GdkPixbuf, Gio, GLib, GnomeDesktop, GObject, Gtk} = imports.gi;
 const ByteArray = imports.byteArray;
-
-imports.gi.versions.GnomeDesktop = '4.0';
-
-let GnomeDesktop = null;
-try {
-    GnomeDesktop = imports.gi.GnomeDesktop;
-} catch (e) {
-    // not compatible with GTK4 yet
-}
 
 const ExtensionUtils = imports.misc.extensionUtils;
 
