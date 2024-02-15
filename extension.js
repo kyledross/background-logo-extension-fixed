@@ -92,7 +92,7 @@ class BackgroundLogo extends St.Widget {
             this._updateOpacity.bind(this));
 
         this._bin = new IconContainer({x_expand: true, y_expand: true});
-        this.add_actor(this._bin);
+        this.add_child(this._bin);
         this._bin.connect('resource-scale-changed',
             this._updateLogoTexture.bind(this));
 
@@ -157,7 +157,7 @@ class BackgroundLogo extends St.Widget {
         this._icon = this._textureCache.load_file_async(this._logoFile, width, -1, scaleFactor, resourceScale);
         this._icon.connect('notify::content',
             this._updateScale.bind(this));
-        this._bin.add_actor(this._icon);
+        this._bin.add_child(this._icon);
     }
 
     _updateScale() {
