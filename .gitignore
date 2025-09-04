@@ -1,3 +1,5 @@
 *.sw?
 *.zip
 *~
+.eslintcache
+node_modules
