@@ -228,24 +228,13 @@ class BackgroundLogo extends St.Widget {
     vfunc_allocate(box) {
         super.vfunc_allocate(box);
 
-        if (this._laterId)
-            return;
-
-        const laters = global.compositor.get_laters();
-        this._laterId = laters.add(Meta.LaterType.BEFORE_REDRAW, () => {
-            this._updateScale();
-            this._updateBorder();
-
-            this._laterId = 0;
-            return GLib.SOURCE_REMOVE;
-        });
+        // Update scale and border immediately during allocation to prevent
+        // visual glitches during Activities Overview animation
+        this._updateScale();
+        this._updateBorder();
     }
 
     _onDestroy() {
-        if (this._laterId)
-            global.compositor.get_laters().remove(this._laterId);
-        this._laterId = 0;
-
         this._backgroundActor.layout_manager = null;
         this._settings.run_dispose();
         this._settings = null;
