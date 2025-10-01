@@ -15,6 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
+/* 
+ * 2025-09-30 - Kyle D. Ross - changed vfunc_allocate() to fix glitching during
+ *                             desktop animation
+/*
 import Clutter from 'gi://Clutter';
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
