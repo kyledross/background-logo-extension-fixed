@@ -18,7 +18,7 @@
 /* 
  * 2025-09-30 - Kyle D. Ross - changed vfunc_allocate() to fix glitching during
  *                             desktop animation
-/*
+ */
 import Clutter from 'gi://Clutter';
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
