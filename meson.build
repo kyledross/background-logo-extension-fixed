@@ -13,7 +13,7 @@ extra_sources = ['COPYING']
 
 schemas = ['org.fedorahosted.background-logo-extension']
 
-uuid = 'background-logo@fedorahosted.org'
+uuid = 'background-logo-fixed@test.org'
 
 ver_arr = meson.project_version().split('.')
 shell_version = ver_arr[0]

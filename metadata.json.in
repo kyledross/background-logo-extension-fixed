@@ -3,6 +3,7 @@
 "name": "Background Logo",
 "description": "Overlay a tasteful logo on the background to enhance the user experience",
 "settings-schema": "@settings_schema@",
-"shell-version": ["@shell_version@"],
+"shell-version": ["48", "49", "50"],
+"version": 1,
 "url": "https://pagure.io/background-logo-extension"
 }
